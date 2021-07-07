@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.math.MathHelper;
+
 import org.lwjgl.opengl.GLContext;
 
 import info.ata4.minecraft.minema.CaptureSession;
@@ -186,8 +188,15 @@ public class VideoHandler extends CaptureModule {
 
 	private float linearizeDepth(float z) {
 		final float near = 0.05f;
-		final float far = this.depthDistance > 0 ? this.depthDistance : Minecraft.getMinecraft().gameSettings.renderDistanceChunks << 4;
-		return 0.1f / (far + near - (2 * z - 1) * (far - near));
+		float far = Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16;
+		if (PrivateAccessor.isShaderPackSupported()) {
+		    far *= 2;
+		    if (far < 173F)
+		        far = 173F;
+		} else
+		    far *= MathHelper.SQRT_2;
+		float customFar = this.depthDistance > 0 ? this.depthDistance : Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16;
+		return MathHelper.clamp(2 * near * far / (far + near - (2 * z - 1) * (far - near)) / customFar, 0F, 1F);
 	}
 
 	private void onRenderEnd(EndRenderEvent e) throws Exception {
