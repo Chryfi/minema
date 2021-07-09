@@ -45,11 +45,9 @@ public final class ShaderHookInjector implements IClassTransformer {
 	private static final String netHandlerPlayClient = "net.minecraft.client.network.NetHandlerPlayClient";
 	private static final String clippingHelper = "net.minecraft.client.renderer.culling.ClippingHelper";
 	private static final String minecraft = "net.minecraft.client.Minecraft";
-//	private static final String shaders = "net.optifine.shaders.Shaders";
 	
 	@Override
 	public byte[] transform(final String obfuscated, final String deobfuscated, final byte[] bytes) {		
-//		if (obfuscated.equals("Config") || obfuscated.contains("optifine")) return null; // debug
 		
 		// "Deobfuscated" is always passed as a deobfuscated argument, but the
 		// "obfuscated" argument may be deobfuscated or obfuscated
@@ -59,7 +57,6 @@ public final class ShaderHookInjector implements IClassTransformer {
 				|| entityTrackerEntry.equals(deobfuscated)
 				|| netHandlerPlayClient.equals(deobfuscated)
 				|| clippingHelper.equals(deobfuscated)
-//				|| shaders.equals(obfuscated)
 				|| minecraft.equals(deobfuscated)) {
 
 			final ClassReader classReader = new ClassReader(bytes);
@@ -82,8 +79,6 @@ public final class ShaderHookInjector implements IClassTransformer {
 				this.transformNetHandlerPlayClient(classNode, isInAlreadyDeobfuscatedState);
 			} else if (clippingHelper.equals(deobfuscated)) {
 				this.transformClippingHelper(classNode, isInAlreadyDeobfuscatedState);
-//			} else if (shaders.equals(obfuscated)) {
-//				this.transformOptifineShaders(classNode);
 			} else if (minecraft.equals(deobfuscated)) {
 				this.transformMinecraft(classNode, isInAlreadyDeobfuscatedState);
 			}
@@ -97,7 +92,7 @@ public final class ShaderHookInjector implements IClassTransformer {
 		return bytes;
 	}
 
-	private void transformEntityRenderer(ClassNode classNode, boolean isInAlreadyDeobfuscatedState) {
+    private void transformEntityRenderer(ClassNode classNode, boolean isInAlreadyDeobfuscatedState) {
 		final String method = isInAlreadyDeobfuscatedState ? "renderWorld" : "b";
 
 		for (final MethodNode m : classNode.methods) {
@@ -120,9 +115,7 @@ public final class ShaderHookInjector implements IClassTransformer {
 					AbstractInsnNode currentNode = iterator.next();
 					if (doesMatchStaticCall(currentNode, calledClass, calledMethod, "()V")) {
 						iterator.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-//								"info/ata4/minecraft/minema/client/modules/ShaderSync",
-//								"setFrameTimeCounter", "()V", false));
-								"info/ata4/minecraft/minema/client/modules/SyncModule",
+								"info/ata4/minecraft/minema/client/modules/modifiers/TimerModifier",
 								"doFrameTimeSync", "()V", false));
 						break;
 					}
@@ -161,27 +154,6 @@ public final class ShaderHookInjector implements IClassTransformer {
 					}
 				}
 			}
-//			{
-//				ListIterator<AbstractInsnNode> iterator = m.instructions.iterator();
-//				HashSet<AbstractInsnNode> targets = new HashSet<>();
-//				
-//				while (iterator.hasNext()) {
-//					AbstractInsnNode currentNode = iterator.next();
-//					
-//					if (currentNode instanceof MethodInsnNode) {
-//						MethodInsnNode mnode = (MethodInsnNode) currentNode;
-//						if (mnode.name.equals("gluPerspective")) {
-//							AbstractInsnNode target = mnode;
-//							while (target != null && !(target instanceof LdcInsnNode && ((LdcInsnNode) target).cst.equals(0.05f))) target = target.getPrevious();
-//							if (target != null)
-//								targets.add(target);
-//						}
-//					}
-//				}
-//				
-//				for (AbstractInsnNode target : targets)
-//					m.instructions.insert(target, new MethodInsnNode(Opcodes.INVOKESTATIC, "info/ata4/minecraft/minema/client/modules/video/VRVideoHandler", "getZNear", "(F)F", false));
-//			}
 		}
 	}
 
@@ -453,23 +425,6 @@ public final class ShaderHookInjector implements IClassTransformer {
 		}
 	}
 
-//	private void transformOptifineShaders(ClassNode classNode) {
-//		for (MethodNode method : classNode.methods) {
-//			if (method.name.equals("useProgram")) {
-//				ListIterator<AbstractInsnNode> it = method.instructions.iterator();
-//				
-//				while (it.hasNext())
-//				{
-//					AbstractInsnNode node = it.next();
-//					if (node.getOpcode() == Opcodes.LDC && ((LdcInsnNode) node).cst.equals(0.05f)) {
-//						it.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "info/ata4/minecraft/minema/client/modules/video/VRVideoHandler", "getZNear", "(F)F", false));
-//						break;
-//					}
-//				}
-//			}
-//		}
-//	}
-
 	private void transformMinecraft(ClassNode classNode, boolean isInAlreadyDeobfuscatedState) {
 		String m = isInAlreadyDeobfuscatedState ? "runGameLoop" : "az";
 		for (MethodNode method : classNode.methods) {
@@ -491,5 +446,4 @@ public final class ShaderHookInjector implements IClassTransformer {
 			}
 		}
 	}
-
 }

@@ -41,9 +41,14 @@ minema.gui.shaderpack.selected=Selected shaderpack "%s"
 key.categories.minema=Minema
 key.minema.capture=Start/stop recording
 key.minema.freeze=Freeze chunks
+key.minema.sync=Switch thread sync
 
 # commands
 commands.minema.usage=/minema <enable|disable>
+
+# messages
+minema.message.sync.enable=[Minema] Thread synchronization is enabled.
+minema.message.sync.disable=[Minema] Thread synchronization is disabled.
 
 # config categories
 minema.config.encoding=Encoding
@@ -128,7 +133,10 @@ minema.config.engineSpeed=Engine Speed
 minema.config.engineSpeed.tooltip=Speed modifier for the game clock. The default is 1.0, which equals 20 ticks per second. Lower or higher values will speed up or slow down the game time. 2.5, for example, results in two and a half of the normal speed. Useful for slow motion or time lapse effects. Ignored if the capturing is unsynchronized.
 
 minema.config.syncEngine=Synchronize
-minema.config.syncEngine.tooltip=If enabled, the local server and client runs synchronously to the video capturing frame rate. This effectively turns Minecraft into an offline renderer and allows rendering and capturing of extremely complex scenes. This ShaderSync version also synchronizes the shader mod by karyonix (compatible with Optifine, too). ONLY WORKS ON LOCAL WORLDS!
+minema.config.syncEngine.tooltip=If enabled, the local server and client runs synchronously to the video capturing frame rate. This effectively turns Minecraft into an offline renderer and allows rendering and capturing of extremely complex scenes. This ShaderSync version also synchronizes the shader mod by karyonix (compatible with Optifine, too). ONLY WORKS ON LOCAL WORLDS! (This option already includes Thread Synchronize)
+
+minema.config.threadSync=Thread Synchronize
+minema.config.threadSync.tooltip=Turn on thread synchronization in single player (not just in recording) as a way to reduce multi-threaded latency issues, allowing some mods to run better (e.g. Aperture), but may cause lag.
 
 minema.config.preloadChunks=Preload Chunks
 minema.config.preloadChunks.tooltip=If enabled, Minema will heavily accelerate the chunk loading rate during recording. THIS IS ONLY TRULY EFFECTIVE ON LOCAL WORLDS!

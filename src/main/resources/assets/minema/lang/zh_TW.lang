@@ -41,9 +41,14 @@ minema.gui.shaderpack.selected=已選擇光影 “%s”
 key.categories.minema=Minema
 key.minema.capture=開始/停止 錄制
 key.minema.freeze=凍結區塊
+key.minema.sync=開關多執行緒同步
 
 # commands
 commands.minema.usage=/minema <enable|disable>
+
+# messages
+minema.message.sync.enable=[Minema] 線程同步已啓用
+minema.message.sync.disable=[Minema] 線程同步已禁用
 
 # config categories
 minema.config.encoding=編碼
@@ -128,7 +133,10 @@ minema.config.engineSpeed=引擎速率
 minema.config.engineSpeed.tooltip=遊戲時鐘的速率修改器。默認值為 1.0，相當於每秒 20 Tick。更低或更高的值會加快或減慢遊戲時間。例如，2.5，結果是正常速度的二分之壹。對於慢動作或延時拍攝很有用。如果不啟用捕獲同步，此項將會被忽略。
 
 minema.config.syncEngine=同步
-minema.config.syncEngine.tooltip=啟用後，本地服務器和客戶端會以視頻捕獲幀率同步運行。這有效地將 Minecraft 變成了壹個離線渲染器，並允許渲染和捕捉極其復雜的場景。本 ShaderSync 版本還同步了 karyonix 的 Shader mod（同時兼容 Optifine）。僅適用於本地世界！
+minema.config.syncEngine.tooltip=啟用後，本地服務器和客戶端會以視頻捕獲幀率同步運行。這有效地將 Minecraft 變成了壹個離線渲染器，並允許渲染和捕捉極其復雜的場景。本 ShaderSync 版本還同步了 karyonix 的 Shader mod（同時兼容 Optifine）。僅適用於本地世界！（此選項已包含多執行緒同步）
+
+minema.config.threadSync=多執行緒同步
+minema.config.threadSync.tooltip=在單人遊戲中（不僅僅是錄製中）開啟多執行緒同步，以此减少多執行緒延遲問題，這使得一些mod可以更好地運行（例如：Aperture），但可能會導致卡頓。
 
 minema.config.preloadChunks=區塊預加載
 minema.config.preloadChunks.tooltip=啟用後，Minema 會在錄制過程中大幅提升區塊加載速度。此項僅在本地世界才會起效！

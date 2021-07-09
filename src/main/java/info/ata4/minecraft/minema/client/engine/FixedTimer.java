@@ -80,7 +80,7 @@ public class FixedTimer extends Timer {
 			if (ticks < 0) {
 				ticks = 0;
 				SyncModule.wakeServerTick();
-				try {PacketMinemaSync.lock.await();} catch (InterruptedException e1) {}
+				PacketMinemaSync.await();
 			} else
 				ticks += timerSpeed * (ticksPerSecond / framesPerSecond);
 			elapsedTicks = (int) (float) ticks;

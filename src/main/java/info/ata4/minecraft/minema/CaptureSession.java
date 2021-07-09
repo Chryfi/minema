@@ -41,7 +41,7 @@ public class CaptureSession {
 	public static final CaptureSession singleton = new CaptureSession();
 
 	private final CaptureModule[] modules = new CaptureModule[] { new GameSettingsModifier(), new ChunkPreloader(), 
-			new SyncModule(), new TimerModifier(), /*new TickSynchronizer(),*/ new DisplaySizeModifier(),
+			new SyncModule(), new TimerModifier(), new DisplaySizeModifier(),
 			new VideoHandler(), new VRVideoHandler(), new CaptureOverlay(), new CaptureNotification(),
 			new AfterEffectsTracker()};
 

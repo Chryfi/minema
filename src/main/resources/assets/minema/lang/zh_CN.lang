@@ -19,6 +19,8 @@ minema.error.require_defvf=旧版编码器参数无法使用运动模糊，请�
 minema.error.vr_not_support=当前设备不支持VR视频导出功能
 minema.error.file_exists=文件 %s 已存在，无法导出
 minema.error.vr_broken=视频 '%s' 写入VR视频元数据失败，文件可能已损坏。
+minema.error.sync.enable=[Minema] 启用引擎同步失败
+minema.error.sync.disable=[Minema] 禁用引擎同步失败
 
 # GUI
 minema.gui.title=视频录制配置
@@ -41,9 +43,14 @@ minema.gui.shaderpack.selected=已选择光影 “%s”
 key.categories.minema=Minema
 key.minema.capture=开始/停止 录制
 key.minema.freeze=冻结区块
+key.minema.sync=开关线程同步
 
 # commands
 commands.minema.usage=/minema <enable|disable>
+
+# messages
+minema.message.sync.enable=[Minema] 线程同步已启用
+minema.message.sync.disable=[Minema] 线程同步已禁用
 
 # config categories
 minema.config.encoding=编码
@@ -128,7 +135,10 @@ minema.config.engineSpeed=引擎速率
 minema.config.engineSpeed.tooltip=游戏时钟的速率修改器。默认值为 1.0，相当于每秒 20 Tick。更低或更高的值会加快或减慢游戏时间。例如，2.5，结果是正常速度的二分之一。对于慢动作或延时拍摄很有用。如果不启用捕获同步，此项将会被忽略。
 
 minema.config.syncEngine=同步
-minema.config.syncEngine.tooltip=启用后，本地服务器和客户端会以视频捕获帧率同步运行。这有效地将 Minecraft 变成了一个离线渲染器，并允许渲染和捕捉极其复杂的场景。本 ShaderSync 版本还同步了 karyonix 的 Shader mod（同时兼容 Optifine）。仅适用于本地世界！
+minema.config.syncEngine.tooltip=启用后，本地服务器和客户端会以视频捕获帧率同步运行。这有效地将 Minecraft 变成了一个离线渲染器，并允许渲染和捕捉极其复杂的场景。本 ShaderSync 版本还同步了 karyonix 的 Shader mod（同时兼容 Optifine）。仅适用于本地世界！（此选项已包含线程同步）
+
+minema.config.threadSync=线程同步
+minema.config.threadSync.tooltip=在单人游戏中（不仅仅是录制中）开启线程同步，以此减少多线程延迟问题，这使得一些mod可以更好地运行（例如：Aperture），但可能会导致卡顿。
 
 minema.config.preloadChunks=区块预加载
 minema.config.preloadChunks.tooltip=启用后，Minema 会在录制过程中大幅提升区块加载速度。此项仅在本地世界才会起效！

@@ -25,6 +25,20 @@ public class TimerModifier extends CaptureModule {
 
 	private static FixedTimer timer = null;
 	private float defaultTps;
+    
+    private static float frameTime;
+    private static double frameTimeStep;
+
+    // Called by ASM from EntityRenderer
+    public static void doFrameTimeSync() {
+        if (timer != null) {
+            if (isFirstFrame()) {
+                frameTime += frameTimeStep;
+                frameTime %= 3600.0;
+            }
+            PrivateAccessor.setFrameTimeCounter(frameTime);
+        }
+    }
 
 	public static FixedTimer getTimer() {
 		return timer;
@@ -61,6 +75,9 @@ public class TimerModifier extends CaptureModule {
 
 		double fps = cfg.getFrameRate();
 		double speed = cfg.engineSpeed.get().doubleValue();
+		
+        frameTime = PrivateAccessor.getFrameTimeCounter();
+        frameTimeStep = speed / fps;
 
 		// set fixed delay timer
 		timer = new FixedTimer(defaultTps, fps, speed);

@@ -1,6 +1,7 @@
 package info.ata4.minecraft.minema;
 
 import info.ata4.minecraft.minema.client.gui.GuiCaptureConfiguration;
+import info.ata4.minecraft.minema.client.modules.SyncModule;
 import info.ata4.minecraft.minema.client.util.ScreenshotHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -13,14 +14,17 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.lwjgl.input.Keyboard;
 
 import info.ata4.minecraft.minema.client.config.MinemaConfig;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.event.world.WorldEvent.Unload;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -53,6 +57,7 @@ public class Minema {
 	private static final String category = "key.categories.minema";
 	private static final KeyBinding KEY_CAPTURE = new KeyBinding("key.minema.capture", Keyboard.KEY_F4, category);
 	/* private static final KeyBinding KEY_FREEZE = new KeyBinding("key.minema.freeze", Keyboard.KEY_HOME, category); */
+	private static final KeyBinding KEY_SYNC = new KeyBinding("key.minema.sync", Keyboard.KEY_HOME, category);
 
 	@Instance(MODID)
 	public static Minema instance;
@@ -70,8 +75,10 @@ public class Minema {
 	public void onInit(FMLInitializationEvent evt) {
 		ClientCommandHandler.instance.registerCommand(new CommandMinema());
 		ClientRegistry.registerKeyBinding(KEY_CAPTURE);
+		ClientRegistry.registerKeyBinding(KEY_SYNC);
 		/* ClientRegistry.registerKeyBinding(KEY_FREEZE); */
 		MinecraftForge.EVENT_BUS.register(this);
+		MinecraftForge.EVENT_BUS.register(SyncModule.class);
 	}
 
 	@SubscribeEvent
@@ -90,6 +97,15 @@ public class Minema {
 				Minecraft.getMinecraft().displayGuiScreen(new GuiCaptureConfiguration());
 			else if (!CaptureSession.singleton.startCapture())
 				CaptureSession.singleton.stopCapture();
+		}
+		
+		if (Minecraft.getMinecraft().isSingleplayer() && KEY_SYNC.isPressed()) {
+		    config.threadSync.set(!config.threadSync.get());
+		    if (config.threadSync.get())
+                Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation("minema.message.sync.enable"));
+		    else
+                Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation("minema.message.sync.disable"));
+		    config.getConfigForge().save();
 		}
 
 		/* if (KEY_FREEZE.isPressed()) {
@@ -118,5 +134,4 @@ public class Minema {
 	public MinemaConfig getConfig() {
 		return config;
 	}
-
 }
