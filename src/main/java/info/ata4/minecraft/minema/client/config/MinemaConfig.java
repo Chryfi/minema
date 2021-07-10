@@ -81,6 +81,7 @@ public class MinemaConfig {
 	public final ConfigBoolean forcePreloadChunks = new ConfigBoolean(false);
 	public final ConfigBoolean disableCulling = new ConfigBoolean(false);
 	public final ConfigString shaderpack = new ConfigString("");
+	public final ConfigInteger renderDistance = new ConfigInteger(0, 0, 64);
 
 	public final ConfigBoolean vr = new ConfigBoolean(false);
 	public final ConfigBoolean vrMetadata = new ConfigBoolean(true);
@@ -135,6 +136,7 @@ public class MinemaConfig {
 		forcePreloadChunks.link(cfg, ENGINE_CATEGORY, "forcePreloadChunks", LANG_KEY);
 		disableCulling.link(cfg, ENGINE_CATEGORY, "disableCulling", LANG_KEY);
 		shaderpack.link(cfg, ENGINE_CATEGORY, "shaderpack", LANG_KEY);
+		renderDistance.link(cfg, ENGINE_CATEGORY, "renderDistance", LANG_KEY);
 		
 		vr.link(cfg, VR_CATEGORY, "enableVR", LANG_KEY);
 		vrMetadata.link(cfg, VR_CATEGORY, "injectMetadata", LANG_KEY);

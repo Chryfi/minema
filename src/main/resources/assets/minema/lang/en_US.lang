@@ -153,6 +153,9 @@ minema.config.disableCulling.tooltip=Force the game to render off screen chunks.
 minema.config.shaderpack=Shaderpack for Recording
 minema.config.shaderpack.tooltip=Automatically switch to this shaderpack when recording.
 
+minema.config.renderDistance=Render Distance
+minema.config.renderDistance.tooltip=Modify the render distance when recording. Set to 0 will not modify the render distance.
+
 # vr video
 minema.config.enableVR=Export Panoramic Video
 minema.config.enableVR.tooltip=Capture the video as 360 (Equirectangular Panoramic Video) video.

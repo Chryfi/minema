@@ -150,6 +150,9 @@ minema.config.disableCulling.tooltip=強制遊戲渲染荧幕外區塊，匯出V
 minema.config.shaderpack=錄製用光影
 minema.config.shaderpack.tooltip=當錄製時自動切換至此光影。
 
+minema.config.renderDistance=視野距離
+minema.config.renderDistance.tooltip=在錄製時修改視野距離至指定數值。設爲 0 將不會改變視野距離。
+
 # vr video
 minema.config.enableVR=匯出全景視頻
 minema.config.enableVR.tooltip=將當前視頻匯出為360度等距柱狀投影全景視頻。

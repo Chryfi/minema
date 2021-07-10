@@ -27,6 +27,7 @@ public class GameSettingsModifier extends CaptureModule {
 	private boolean vSync;
 	private boolean pauseOnLostFocus;
 	private String lastShaderPack;
+	private int renderDistance;
 
 	@Override
 	protected void doEnable() throws Exception {
@@ -43,9 +44,10 @@ public class GameSettingsModifier extends CaptureModule {
 		// don't pause when losing focus
 		pauseOnLostFocus = gs.pauseOnLostFocus;
 		gs.pauseOnLostFocus = false;
-		
+
+        MinemaConfig cfg = Minema.instance.getConfig();
+        
 		if (PrivateAccessor.isShaderPackSupported()) {
-			MinemaConfig cfg = Minema.instance.getConfig();
 			String pack = cfg.shaderpack.get();
 			if (pack != null && !pack.isEmpty()) {
 				File packDir = PrivateAccessor.getShaderPacksDir();
@@ -58,6 +60,14 @@ public class GameSettingsModifier extends CaptureModule {
 					}
 				}
 			}
+		}
+		
+		renderDistance = gs.renderDistanceChunks;
+		int dist = cfg.renderDistance.get();
+		if (dist > 0) {
+		    gs.renderDistanceChunks = dist;
+		    if (MC.getIntegratedServer() != null)
+		        MC.getIntegratedServer().getPlayerList().setViewDistance(dist);
 		}
 	}
 
@@ -74,6 +84,8 @@ public class GameSettingsModifier extends CaptureModule {
 			PrivateAccessor.uninitShaderPack();
 			lastShaderPack = null;
 		}
+		
+        gs.renderDistanceChunks = renderDistance;
 	}
 
 	@Override
