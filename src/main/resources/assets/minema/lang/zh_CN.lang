@@ -155,6 +155,9 @@ minema.config.shaderpack.tooltip=当录制时自动切换至此光影。
 minema.config.renderDistance=渲染距离
 minema.config.renderDistance.tooltip=录制时修改渲染距离为指定值。设为 0 将不会修改渲染距离。
 
+minema.config.limitFramerate=帧率限制
+minema.config.limitFramerate.tooltip=启用游戏内的帧数限制选项，防止游戏出现速度变快的情况。仅在开启“同步”后生效。
+
 # vr video
 minema.config.enableVR=导出全景视频
 minema.config.enableVR.tooltip=将当前视频导出为360度等距柱状投影全景视频。

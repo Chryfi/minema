@@ -156,6 +156,9 @@ minema.config.shaderpack.tooltip=Automatically switch to this shaderpack when re
 minema.config.renderDistance=Render Distance
 minema.config.renderDistance.tooltip=Modify the render distance when recording. Set to 0 will not modify the render distance.
 
+minema.config.limitFramerate=Frame rate limit
+minema.config.limitFramerate.tooltip=Use the in-game frame rate limit option to prevent the game from running faster. Only works when "Synchronize" is enabled
+
 # vr video
 minema.config.enableVR=Export Panoramic Video
 minema.config.enableVR.tooltip=Capture the video as 360 (Equirectangular Panoramic Video) video.

@@ -31,11 +31,15 @@ public class GameSettingsModifier extends CaptureModule {
 
 	@Override
 	protected void doEnable() throws Exception {
+        MinemaConfig cfg = Minema.instance.getConfig();
 		GameSettings gs = MC.gameSettings;
 
-		// disable build-in framerate limit
+		// Minecraft build-in framerate limit
 		framerateLimit = gs.limitFramerate;
-		gs.limitFramerate = Integer.MAX_VALUE;
+		if (cfg.syncEngine.get() && cfg.limitFramerate.get())
+		    gs.limitFramerate = (int) cfg.getFrameRate() * cfg.heldFrames.get() * (cfg.vr.get() ? 6 : 1);
+		else
+		    gs.limitFramerate = Integer.MAX_VALUE;
 
 		// disable vSync
 		vSync = gs.enableVsync;
@@ -44,8 +48,6 @@ public class GameSettingsModifier extends CaptureModule {
 		// don't pause when losing focus
 		pauseOnLostFocus = gs.pauseOnLostFocus;
 		gs.pauseOnLostFocus = false;
-
-        MinemaConfig cfg = Minema.instance.getConfig();
         
 		if (PrivateAccessor.isShaderPackSupported()) {
 			String pack = cfg.shaderpack.get();

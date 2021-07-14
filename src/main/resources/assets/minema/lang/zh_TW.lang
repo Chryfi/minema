@@ -128,6 +128,9 @@ minema.config.exportAECamera.tooltip=匯出可直接粘貼至After Effects中的
 minema.config.motionBlurLevel=運動糢糊
 minema.config.motionBlurLevel.tooltip=基於ffmpeg的運動模糊效果，僅在啟用視頻編碼時可用。模糊的質量越高，渲染時間就越長，且呈現指數級增長，High和Ultra建議用於具有大量運動的鏡頭。
 
+minema.config.limitFramerate=幀數限制
+minema.config.limitFramerate.tooltip=啟用遊戲內的幀數限制選項，使遊戲盡可能保持在正常速度運行。
+
 # config engine
 minema.config.engineSpeed=引擎速率
 minema.config.engineSpeed.tooltip=遊戲時鐘的速率修改器。默認值為 1.0，相當於每秒 20 Tick。更低或更高的值會加快或減慢遊戲時間。例如，2.5，結果是正常速度的二分之壹。對於慢動作或延時拍攝很有用。如果不啟用捕獲同步，此項將會被忽略。
@@ -152,6 +155,9 @@ minema.config.shaderpack.tooltip=當錄製時自動切換至此光影。
 
 minema.config.renderDistance=視野距離
 minema.config.renderDistance.tooltip=在錄製時修改視野距離至指定數值。設爲 0 將不會改變視野距離。
+
+minema.config.limitFramerate=幀率限制
+minema.config.limitFramerate.tooltip=啟用遊戲內的幀數限制選項，防止遊戲出現速度變快的情况。僅在開啟“同步”後生效。
 
 # vr video
 minema.config.enableVR=匯出全景視頻
