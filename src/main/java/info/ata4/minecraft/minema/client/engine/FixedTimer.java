@@ -74,6 +74,8 @@ public class FixedTimer extends Timer {
 	@Override
 	public void updateTimer() {
 		isFirstFrame = false;
+        elapsedTicks = 0;
+
 		if (canOutput) { // last frame can output
 			isFirstFrame = true;
 			// First frame has a server tick
@@ -88,8 +90,6 @@ public class FixedTimer extends Timer {
 			if (ticks < 1E-14)
 				ticks = 0;
 			renderPartialTicks = elapsedPartialTicks = (float) ticks;
-			
-//			SyncModule.wakeServerTick(elapsedTicks); // Before client handle network message.
 		}
 		
 		canOutput = false;
@@ -98,22 +98,10 @@ public class FixedTimer extends Timer {
 		vrCount %= 6;
 		vrFace = vrCount;
 		if (frames >= held) {
-//			if (held > 1) {
-//				ShaderSync.freeze(false);
-//			}
-
 			frames = 0;
 			canRecord = true;
 			canOutput = vr ? ++vrCount == 6 : true;
-		} 
-		if (frames > 1 && frames < held || vrFace > 0){
-//			if (held > 1) {
-//				ShaderSync.freeze(true);
-//			}
-
-			elapsedTicks = 0;
 		}
-        
 	}
 
 	public void setSpeed(double speed) {
