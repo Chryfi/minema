@@ -122,6 +122,19 @@ public class AfterEffectsTracker extends BaseTracker {
 				fw.println("\tFrame");
 				for (Entry<Integer, Double> entry : zoom.entrySet())
 					fw.println(String.format("\t%d\t%.3f", entry.getKey(), entry.getValue()));
+
+	            fw.println("Expression Data");
+                fw.println("// Keep fov value when scaling composite.");
+	            fw.println(String.format("thisComp.height / %d * cameraOption.zoom", height));
+	            fw.println("End of Expression Data");
+
+	            fw.println("Transform\tPoint of Interest");
+	            fw.println("\tFrame");
+	            fw.println("\t\t0\t0\t0");
+	            fw.println("Expression Data");
+                fw.println("// These tracking data only support one-node camera");
+	            fw.println("transform.position");
+	            fw.println("End of Expression Data");
 			}
 			
 			fw.println("Transform\tOrientation");
@@ -248,8 +261,10 @@ public class AfterEffectsTracker extends BaseTracker {
         mat.m03 = mat.m13 = mat.m23 = 0;
         trans.rotY(Math.PI);
         mat.mul(trans);
-        trans.rotZ(Math.PI);
-        mat.mul(trans);
+        if (isCamera) {
+            trans.rotZ(Math.PI);
+            mat.mul(trans);
+        }
         
         Vector4d test = new Vector4d(0, 0, 1, 1);
         Vector4d result = new Vector4d();
