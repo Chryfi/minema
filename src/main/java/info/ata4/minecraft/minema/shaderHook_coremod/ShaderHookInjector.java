@@ -427,6 +427,7 @@ public final class ShaderHookInjector implements IClassTransformer {
 
 	private void transformMinecraft(ClassNode classNode, boolean isInAlreadyDeobfuscatedState) {
 		String m = isInAlreadyDeobfuscatedState ? "runGameLoop" : "az";
+		String m2 = isInAlreadyDeobfuscatedState ? "resize" : "a";
 		for (MethodNode method : classNode.methods) {
 			if (method.name.equals(m)) {
 				ListIterator<AbstractInsnNode> it = method.instructions.iterator();
@@ -440,9 +441,21 @@ public final class ShaderHookInjector implements IClassTransformer {
 						MethodInsnNode mnode = (MethodInsnNode) node;
 						mnode.name = "minTicks";
 						mnode.owner = "info/ata4/minecraft/minema/client/modules/SyncModule";
-						return;
 					}
 				}
+			} else if (method.name.equals(m2) && method.desc.equals("(II)V")) {
+		         LabelNode label = new LabelNode();
+
+		         InsnList list = new InsnList();
+		         list.add(new VarInsnNode(Opcodes.ILOAD, 1));
+		         list.add(new VarInsnNode(Opcodes.ILOAD, 2));
+		         list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "info/ata4/minecraft/minema/client/modules/modifiers/DisplaySizeModifier", "onResize", "(II)Z", false));
+		         list.add(new JumpInsnNode(Opcodes.IFNE, label));
+		         list.add(new InsnNode(Opcodes.RETURN));
+		         list.add(label);
+		         list.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
+		         
+		         method.instructions.insertBefore(method.instructions.getFirst(), list);
 			}
 		}
 	}

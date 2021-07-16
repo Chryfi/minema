@@ -41,7 +41,7 @@ public class SyncModule extends CaptureModule {
 	
 	// Called by ASM from Minecraft
 	public static int minTicks(int ten, int elapsedTicks) {
-		return canSync() ? elapsedTicks : Math.min(ten, elapsedTicks);
+		return instance != null && instance.isEnabled() ? elapsedTicks : Math.min(ten, elapsedTicks);
 	}
 
 	// Called by ASM from EntityTrackerEntry & NetHandlerPlayClient

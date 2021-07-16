@@ -188,11 +188,14 @@ public class VRVideoHandler extends CaptureModule {
 		MinecraftForge.EVENT_BUS.unregister(this);
 		
 		// Export Last Frame
-		colorExport.waitForLastExport();
-		if (colorReader.readLastFrame()) {
-			colorExport.exportFrame(colorReader.buffer);
-		}
-		
+		try {
+	        colorExport.waitForLastExport();
+	        if (colorReader.readLastFrame()) {
+	            colorExport.exportFrame(colorReader.buffer);
+	        }
+	        colorExport.waitForLastExport();
+		} catch (Exception e) {}
+
 		colorReader.destroy();
 		colorExport.destroy();
 		colorReader = null;

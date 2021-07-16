@@ -98,10 +98,13 @@ public class VideoHandler extends CaptureModule {
 	protected void doDisable() throws Exception {
 		
 		// Export Last Frame
-		colorExport.waitForLastExport();
-		if (colorReader.readLastFrame()) {
-			colorExport.exportFrame(colorReader.buffer);
-		}
+        try {
+            colorExport.waitForLastExport();
+            if (colorReader.readLastFrame()) {
+                colorExport.exportFrame(colorReader.buffer);
+            }
+            colorExport.waitForLastExport();
+        } catch (Exception e) {}
 		
 		colorReader.destroy();
 		colorExport.destroy();
@@ -111,23 +114,27 @@ public class VideoHandler extends CaptureModule {
 		if (depthReader == null)
 			return;
 
-		depthExport.waitForLastExport();
-		if (depthReader.readLastFrame()) {
-			ByteBuffer floats = depthReader.buffer;
+		try {
+	        depthExport.waitForLastExport();
+	        if (depthReader.readLastFrame()) {
+	            ByteBuffer floats = depthReader.buffer;
 
-			while (floats.hasRemaining()) {
-				float f = floats.getFloat();
-				byte b = (byte) (linearizeDepth(f) * 255);
-				depthRemapping.put(b);
-				depthRemapping.put(b);
-				depthRemapping.put(b);
-			}
+	            while (floats.hasRemaining()) {
+	                float f = floats.getFloat();
+	                byte b = (byte) (linearizeDepth(f) * 255);
+	                depthRemapping.put(b);
+	                depthRemapping.put(b);
+	                depthRemapping.put(b);
+	            }
 
-			floats.rewind();
-			depthRemapping.rewind();
+	            floats.rewind();
+	            depthRemapping.rewind();
 
-			depthExport.exportFrame(depthRemapping);
-		}
+	            depthExport.exportFrame(depthRemapping);
+	        }
+	        depthExport.waitForLastExport();
+		} catch (Exception e) {}
+
 		depthReader.destroy();
 		depthExport.destroy();
 		depthExport = null;
