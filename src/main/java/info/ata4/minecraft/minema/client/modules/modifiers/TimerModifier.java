@@ -86,7 +86,7 @@ public class TimerModifier extends CaptureModule {
 
 	@Override
 	protected boolean checkEnable() {
-		return Minema.instance.getConfig().syncEngine.get() & MC.isSingleplayer();
+		return (Minema.instance.getConfig().syncEngine.get() || Minema.instance.getConfig().vr.get()) && MC.isSingleplayer();
 	}
 
 	@Override

@@ -37,7 +37,6 @@ public abstract class FrameExporter {
 	}
 
 	public void destroy() throws Exception {
-		waitForLastExport();
 		exportService.shutdown();
 
 		try {

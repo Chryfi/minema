@@ -4,12 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.nio.DoubleBuffer;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.vecmath.Matrix4d;
@@ -17,8 +13,6 @@ import javax.vecmath.Vector3d;
 import javax.vecmath.Vector4d;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-
-import com.google.common.collect.ImmutableMap;
 
 import info.ata4.minecraft.minema.CaptureSession;
 import info.ata4.minecraft.minema.Minema;
@@ -28,10 +22,6 @@ import info.ata4.minecraft.minema.client.modules.modifiers.TimerModifier;
 import info.ata4.minecraft.minema.client.modules.video.vr.CubeFace;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class AfterEffectsTracker extends BaseTracker {
 	
@@ -87,7 +77,7 @@ public class AfterEffectsTracker extends BaseTracker {
 
 	@Override
 	protected boolean checkEnable() {
-		return Minema.instance.getConfig().exportAECamera.get() && !Minema.instance.getConfig().vr.get();
+		return Minema.instance.getConfig().exportAECamera.get();
 	}
 
 	@Override
@@ -118,15 +108,17 @@ public class AfterEffectsTracker extends BaseTracker {
 			fw.println("\tComp Pixel Aspect Ratio\t1");
 			
 			if (zoom != null) {
-				fw.println("Camera Options\tZoom");
-				fw.println("\tFrame");
-				for (Entry<Integer, Double> entry : zoom.entrySet())
-					fw.println(String.format("\t%d\t%.3f", entry.getKey(), entry.getValue()));
+			    if (!Minema.instance.getConfig().vr.get()) {
+	                fw.println("Camera Options\tZoom");
+	                fw.println("\tFrame");
+	                for (Entry<Integer, Double> entry : zoom.entrySet())
+	                    fw.println(String.format("\t%d\t%.3f", entry.getKey(), entry.getValue()));
 
-	            fw.println("Expression Data");
-                fw.println("// Keep fov value when scaling composite.");
-	            fw.println(String.format("thisComp.height / %d * cameraOption.zoom", height));
-	            fw.println("End of Expression Data");
+	                fw.println("Expression Data");
+	                fw.println("// Keep fov value when scaling composite.");
+	                fw.println(String.format("thisComp.height / %d * cameraOption.zoom", height));
+	                fw.println("End of Expression Data");
+			    }
 
 	            fw.println("Transform\tPoint of Interest");
 	            fw.println("\tFrame");
@@ -166,7 +158,7 @@ public class AfterEffectsTracker extends BaseTracker {
 	
 	@Override
 	public void track(String name) {
-        if (!this.isEnabled() || !TimerModifier.canRecord() || !tracking)
+        if (!this.isEnabled() || !TimerModifier.canRecord() || TimerModifier.getCubeFace() != CubeFace.FRONT || !tracking)
             return;
         
         updateMVP();
@@ -261,10 +253,8 @@ public class AfterEffectsTracker extends BaseTracker {
         mat.m03 = mat.m13 = mat.m23 = 0;
         trans.rotY(Math.PI);
         mat.mul(trans);
-        if (isCamera) {
-            trans.rotZ(Math.PI);
-            mat.mul(trans);
-        }
+        trans.rotZ(Math.PI);
+        mat.mul(trans);
         
         Vector4d test = new Vector4d(0, 0, 1, 1);
         Vector4d result = new Vector4d();

@@ -16,9 +16,9 @@ minema.error.ffmpeg_error=可能是由於沒有權限，無法導出視頻到 '%
 minema.error.export_frame=無法輸出幀 %s
 minema.error.size_change=顯示大小發生改變！當前大小: %dx%d 起始大小: %dx%d
 minema.error.require_defvf=運動模糊不能用於舊編碼器參數。請將編碼器參數重置為預設值。
-minema.error.vr_not_support=當前設備不支持VR視頻匯出功能
+minema.error.vr_not_support=當前設備不支持全景視頻匯出功能
 minema.error.file_exists=檔案%s已存在，無法匯出
-minema.error.vr_broken=視頻 '%s' 寫入VR視頻中繼資料失敗，檔案可能已損壞。
+minema.error.vr_broken=視頻 '%s' 寫入全景視頻中繼資料失敗，檔案可能已損壞。
 
 # GUI
 minema.gui.title=視頻錄制配置
@@ -60,8 +60,8 @@ minema.config.capturing.tooltip=視頻錄制設置。
 minema.config.engine=引擎覆蓋
 minema.config.engine.tooltip=錄制時應用的高級引擎覆蓋設置。
 
-minema.config.vr=360度全景視頻（测试特性）
-minema.config.vr.tooltip=暫不相容深度通道、AE關鍵幀匯出。
+minema.config.vr=360度全景視頻
+minema.config.vr.tooltip=全景視頻設置。
 
 # config encoding
 minema.config.useVideoEncoder=啟用視頻編碼
@@ -136,7 +136,7 @@ minema.config.engineSpeed=引擎速率
 minema.config.engineSpeed.tooltip=遊戲時鐘的速率修改器。默認值為 1.0，相當於每秒 20 Tick。更低或更高的值會加快或減慢遊戲時間。例如，2.5，結果是正常速度的二分之壹。對於慢動作或延時拍攝很有用。如果不啟用捕獲同步，此項將會被忽略。
 
 minema.config.syncEngine=同步
-minema.config.syncEngine.tooltip=啟用後，本地服務器和客戶端會以視頻捕獲幀率同步運行。這有效地將 Minecraft 變成了壹個離線渲染器，並允許渲染和捕捉極其復雜的場景。本 ShaderSync 版本還同步了 karyonix 的 Shader mod（同時兼容 Optifine）。僅適用於本地世界！（此選項已包含多執行緒同步）
+minema.config.syncEngine.tooltip=啟用後，本地服務器和客戶端會以視頻捕獲幀率同步運行。這有效地將 Minecraft 變成了壹個離線渲染器，並允許渲染和捕捉極其復雜的場景。本 ShaderSync 版本還同步了 karyonix 的 Shader mod（同時兼容 Optifine）。僅適用於本地世界！（此選項已包含多執行緒同步，匯出全景視頻時會自動啟用）
 
 minema.config.threadSync=多執行緒同步
 minema.config.threadSync.tooltip=在單人遊戲中（不僅僅是錄製中）開啟多執行緒同步，以此减少多執行緒延遲問題，這使得一些mod可以更好地運行（例如：Aperture），但可能會導致卡頓。
@@ -148,7 +148,7 @@ minema.config.forcePreloadChunks=強制區塊預加載
 minema.config.forcePreloadChunks.tooltip=在啟用了區塊預加載，同時也啟用本功能，那麽渲染距離內的所有區塊都會被預加載。此項僅在本地世界才會起效！
 
 minema.config.disableCulling=禁用荧幕外區塊剔除
-minema.config.disableCulling.tooltip=強制遊戲渲染荧幕外區塊，匯出VR時會自動啟用。
+minema.config.disableCulling.tooltip=強制遊戲渲染荧幕外區塊，匯出全景視頻時會自動啟用。
 
 minema.config.shaderpack=錄製用光影
 minema.config.shaderpack.tooltip=當錄製時自動切換至此光影。
@@ -161,7 +161,7 @@ minema.config.limitFramerate.tooltip=啟用遊戲內的幀數限制選項，防�
 
 # vr video
 minema.config.enableVR=匯出全景視頻
-minema.config.enableVR.tooltip=將當前視頻匯出為360度等距柱狀投影全景視頻。
+minema.config.enableVR.tooltip=將當前視頻匯出為360度等距柱狀投影全景視頻。如果同步功能無法啓用，則本功能也無法使用。
 
 minema.config.injectMetadata=寫入全景視頻中繼資料
 minema.config.injectMetadata.tooltip=向 MP4 格式的全景視頻寫入中繼資料以便於播放機與視頻網站識別視頻格式，如果匯出的全景視頻總是損壞，請關閉此功能。

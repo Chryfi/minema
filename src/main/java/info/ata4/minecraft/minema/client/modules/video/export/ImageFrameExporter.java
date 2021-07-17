@@ -28,6 +28,12 @@ import info.ata4.minecraft.minema.client.modules.modifiers.TimerModifier;
  */
 public class ImageFrameExporter extends FrameExporter {
 
+    private boolean isColor;
+    
+    public ImageFrameExporter(boolean isColor) {
+        this.isColor = isColor;
+    }
+
 	@Override
 	protected void doExportFrame(ByteBuffer buffer) throws Exception {
 		String fileName = String.format("%06d.tga", CaptureSession.singleton.getTime().getNumFrames());
@@ -50,7 +56,7 @@ public class ImageFrameExporter extends FrameExporter {
 
 		// bits per pixel
 		tgah.position(16);
-		tgah.put((byte) (Minema.instance.getConfig().useAlpha.get() ? 32 : 24));
+		tgah.put((byte) (isColor && Minema.instance.getConfig().useAlpha.get() ? 32 : 24));
 
 		tgah.rewind();
 

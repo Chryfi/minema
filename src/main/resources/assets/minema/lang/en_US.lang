@@ -16,9 +16,9 @@ minema.error.ffmpeg_error=Either cannot export video to '%s' due to not having p
 minema.error.export_frame=Can't export frame %s
 minema.error.size_change=Display size changed! Current: %dx%d Start: %dx%d
 minema.error.require_defvf=Motion blur is not available with the old encoder parameters, please reset the encoder parameters to their default values.
-minema.error.vr_not_support=Device does not support VR video export
+minema.error.vr_not_support=Device does not support panoramic video export
 minema.error.file_exists=File %s already exists and cannot be exported.
-minema.error.vr_broken=Failed to write VR video metadata to file '%s', file may be broken.
+minema.error.vr_broken=Failed to write panoramic video metadata to file '%s', file may be broken.
 
 # GUI
 minema.gui.title=Video recording configuration
@@ -60,8 +60,8 @@ minema.config.capturing.tooltip=Settings for video recording.
 minema.config.engine=Engine Overrides
 minema.config.engine.tooltip=Advanced engine override settings used during recording.
 
-minema.config.vr=Equirectangular Panoramic Video (Test Feature)
-minema.config.vr.tooltip=It is not compatible with depth channel and AE keyframe export for now.
+minema.config.vr=Equirectangular Panoramic Video
+minema.config.vr.tooltip=Settings for panoramic video.
 
 # config encoding
 minema.config.useVideoEncoder=Use Video Encoder
@@ -133,7 +133,7 @@ minema.config.engineSpeed=Engine Speed
 minema.config.engineSpeed.tooltip=Speed modifier for the game clock. The default is 1.0, which equals 20 ticks per second. Lower or higher values will speed up or slow down the game time. 2.5, for example, results in two and a half of the normal speed. Useful for slow motion or time lapse effects. Ignored if the capturing is unsynchronized.
 
 minema.config.syncEngine=Synchronize
-minema.config.syncEngine.tooltip=If enabled, the local server and client runs synchronously to the video capturing frame rate. This effectively turns Minecraft into an offline renderer and allows rendering and capturing of extremely complex scenes. This ShaderSync version also synchronizes the shader mod by karyonix (compatible with Optifine, too). ONLY WORKS ON LOCAL WORLDS! (This option already includes Thread Synchronize)
+minema.config.syncEngine.tooltip=If enabled, the local server and client runs synchronously to the video capturing frame rate. This effectively turns Minecraft into an offline renderer and allows rendering and capturing of extremely complex scenes. This ShaderSync version also synchronizes the shader mod by karyonix (compatible with Optifine, too). ONLY WORKS ON LOCAL WORLDS! (This option already includes Thread Synchronize and this option will be automatically enabled when exporting panoramic video.)
 
 minema.config.threadSync=Thread Synchronize
 minema.config.threadSync.tooltip=Turn on thread synchronization in single player (not just in recording) as a way to reduce multi-threaded latency issues, allowing some mods to run better (e.g. Aperture), but may cause lag.
@@ -148,7 +148,7 @@ minema.config.networkDelay=Delay for thread packets
 minema.config.networkDelay.tooltip=Sleep the client thread for receive and handle all server thread packets.
 
 minema.config.disableCulling=Disable Frustum Culling
-minema.config.disableCulling.tooltip=Force the game to render off screen chunks. This option will be automatically enabled when exporting VR.
+minema.config.disableCulling.tooltip=Force the game to render off screen chunks. This option will be automatically enabled when exporting panoramic video.
 
 minema.config.shaderpack=Shaderpack for Recording
 minema.config.shaderpack.tooltip=Automatically switch to this shaderpack when recording.
@@ -161,7 +161,7 @@ minema.config.limitFramerate.tooltip=Use the in-game frame rate limit option to 
 
 # vr video
 minema.config.enableVR=Export Panoramic Video
-minema.config.enableVR.tooltip=Capture the video as 360 (Equirectangular Panoramic Video) video.
+minema.config.enableVR.tooltip=Capture the video as 360 (Equirectangular Panoramic Video) video. Available only when the "Synchronize" is available
 
 minema.config.injectMetadata=Inject Spherical Metadata
 minema.config.injectMetadata.tooltip=Inject spherical metadata to MP4 format panoramic video in order to facilitate the player and video website to identify the video format, turn off this option if the exported panoramic video is always broken.

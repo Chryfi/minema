@@ -18,6 +18,8 @@ import static org.lwjgl.opengl.GL12.GL_BGRA;
 
 public class ColorbufferReader extends CommonReader {
 
+	public Framebuffer fb;
+	
 	public ColorbufferReader(int width, int height, boolean isPBO, boolean isFBO, boolean isAlpha) {
 		super(width, height, isAlpha ? 4 : 3, GL_UNSIGNED_BYTE, isAlpha ? GL_BGRA : GL_BGR, isPBO, isFBO);
 	}
@@ -32,7 +34,7 @@ public class ColorbufferReader extends CommonReader {
 			glBindBufferARB(PBO_TARGET, frontName);
 
 			if (isFBO) {
-				Framebuffer fb = MC.getFramebuffer();
+				Framebuffer fb = this.fb == null ? MC.getFramebuffer() : this.fb;
 				fb.bindFramebufferTexture();
 				glGetTexImage(GL_TEXTURE_2D, 0, FORMAT, TYPE, 0);
 				fb.unbindFramebufferTexture();
@@ -55,7 +57,7 @@ public class ColorbufferReader extends CommonReader {
 			backName = swapName;
 		} else {
 			if (isFBO) {
-				Framebuffer fb = MC.getFramebuffer();
+				Framebuffer fb = this.fb == null ? MC.getFramebuffer() : this.fb;
 				fb.bindFramebufferTexture();
 				glGetTexImage(GL_TEXTURE_2D, 0, FORMAT, TYPE, buffer);
 				fb.unbindFramebufferTexture();
