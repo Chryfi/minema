@@ -56,6 +56,14 @@ public class TimerModifier extends CaptureModule {
 		return timer == null ? null : CubeFace.values()[timer.getCubeFace()];
 	}
 
+	public static boolean refreshMouse() {
+		if (timer != null) {
+			MC.mouseHelper.deltaX = 0;
+			MC.mouseHelper.deltaY = 0;
+		}
+		return isFirstFrame();
+	}
+
 	@Override
 	protected void doEnable() {
 		MinemaConfig cfg = Minema.instance.getConfig();

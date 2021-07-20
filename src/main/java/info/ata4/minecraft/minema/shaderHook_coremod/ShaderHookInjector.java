@@ -45,6 +45,7 @@ public final class ShaderHookInjector implements IClassTransformer {
 	private static final String netHandlerPlayClient = "net.minecraft.client.network.NetHandlerPlayClient";
 	private static final String clippingHelper = "net.minecraft.client.renderer.culling.ClippingHelper";
 	private static final String minecraft = "net.minecraft.client.Minecraft";
+	private static final String mouseHelper = "net.minecraft.util.MouseHelper";
 	
 	@Override
 	public byte[] transform(final String obfuscated, final String deobfuscated, final byte[] bytes) {		
@@ -57,7 +58,8 @@ public final class ShaderHookInjector implements IClassTransformer {
 				|| entityTrackerEntry.equals(deobfuscated)
 				|| netHandlerPlayClient.equals(deobfuscated)
 				|| clippingHelper.equals(deobfuscated)
-				|| minecraft.equals(deobfuscated)) {
+				|| minecraft.equals(deobfuscated)
+				|| mouseHelper.equals(deobfuscated)) {
 
 			final ClassReader classReader = new ClassReader(bytes);
 			final ClassNode classNode = new ClassNode();
@@ -81,6 +83,8 @@ public final class ShaderHookInjector implements IClassTransformer {
 				this.transformClippingHelper(classNode, isInAlreadyDeobfuscatedState);
 			} else if (minecraft.equals(deobfuscated)) {
 				this.transformMinecraft(classNode, isInAlreadyDeobfuscatedState);
+			} else if (mouseHelper.equals(deobfuscated)) {
+				this.transformMouseHelper(classNode, isInAlreadyDeobfuscatedState);
 			}
 
 			final ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
@@ -92,7 +96,7 @@ public final class ShaderHookInjector implements IClassTransformer {
 		return bytes;
 	}
 
-    private void transformEntityRenderer(ClassNode classNode, boolean isInAlreadyDeobfuscatedState) {
+	private void transformEntityRenderer(ClassNode classNode, boolean isInAlreadyDeobfuscatedState) {
 		final String method = isInAlreadyDeobfuscatedState ? "renderWorld" : "b";
 
 		for (final MethodNode m : classNode.methods) {
@@ -450,6 +454,25 @@ public final class ShaderHookInjector implements IClassTransformer {
 		         list.add(new VarInsnNode(Opcodes.ILOAD, 1));
 		         list.add(new VarInsnNode(Opcodes.ILOAD, 2));
 		         list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "info/ata4/minecraft/minema/client/modules/modifiers/DisplaySizeModifier", "onResize", "(II)Z", false));
+		         list.add(new JumpInsnNode(Opcodes.IFNE, label));
+		         list.add(new InsnNode(Opcodes.RETURN));
+		         list.add(label);
+		         list.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
+		         
+		         method.instructions.insertBefore(method.instructions.getFirst(), list);
+			}
+		}
+	}
+
+    private void transformMouseHelper(ClassNode classNode, boolean isInAlreadyDeobfuscatedState) {
+		String m = isInAlreadyDeobfuscatedState ? "mouseXYChange" : "c";
+
+		for (MethodNode method : classNode.methods) {
+			if (method.name.equals(m)) {
+		         LabelNode label = new LabelNode();
+
+		         InsnList list = new InsnList();
+		         list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "info/ata4/minecraft/minema/client/modules/modifiers/TimerModifier", "refreshMouse", "()Z", false));
 		         list.add(new JumpInsnNode(Opcodes.IFNE, label));
 		         list.add(new InsnNode(Opcodes.RETURN));
 		         list.add(label);
