@@ -52,7 +52,7 @@ public class SyncModule extends CaptureModule {
 	private static AtomicBoolean isRemote = null;
 	
     private static boolean canSync() {
-        return MC.player != null && MC.world != null && MC.isSingleplayer() && (instance != null && instance.isEnabled() || Minema.instance.getConfig().threadSync.get());
+        return Minema.instance.isInGame() && MC.player != null && MC.world != null && MC.isSingleplayer() && (instance != null && instance.isEnabled() || Minema.instance.getConfig().threadSync.get());
     }
 	
 	// Called by ASM from MinecraftServer

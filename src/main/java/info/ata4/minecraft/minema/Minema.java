@@ -14,6 +14,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.lwjgl.input.Keyboard;
@@ -64,6 +65,8 @@ public class Minema {
 	public static ModContainer container;
 
 	private MinemaConfig config;
+	
+	private boolean isInGame;
 
 	@EventHandler
 	public void onPreInit(FMLPreInitializationEvent e) {
@@ -133,5 +136,24 @@ public class Minema {
 
 	public MinemaConfig getConfig() {
 		return config;
+	}
+
+	@SubscribeEvent
+	public void onConnected(ClientConnectedToServerEvent e)
+	{
+		this.isInGame = true;
+	}
+
+	@SubscribeEvent
+	public void onDisconnected(ClientDisconnectionFromServerEvent e)
+	{
+		this.isInGame = false;
+		if (CaptureSession.singleton.isEnabled())
+			CaptureSession.singleton.stopCapture();
+	}
+	
+	public boolean isInGame()
+	{
+		return this.isInGame;
 	}
 }
