@@ -31,19 +31,17 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
 public class ChunkPreloader extends CaptureModule {
 
 	private static ChunkPreloader instance;
-	private static boolean forcePreload = false;
 	
 	private Field renderInfosField;
 	private Field renderDispatcherField;
 	private Field renderChunkField;
-//	private Field renderViewFrustum;
 	
 	// Optifine
 	private int chunkUpdates;
 	private boolean lazyLoad;
 
 	public static boolean skipCulling() {
-		return instance != null && instance.isEnabled() && (Minema.instance.getConfig().disableCulling.get() || Minema.instance.getConfig().vr.get());
+		return instance != null && instance.isEnabled() && Minema.instance.getConfig().vr.get() || Minema.instance.getConfig().disableCulling.get();
 	}
 	
 	public static void forcePreload() {
@@ -106,7 +104,6 @@ public class ChunkPreloader extends CaptureModule {
 		
 		renderInfosField = Utils.getField(RenderGlobal.class, "field_72755_R", "renderInfos");
 		renderDispatcherField = Utils.getField(RenderGlobal.class, "field_174995_M", "renderDispatcher");
-//		renderViewFrustum = Utils.getField(RenderGlobal.class, "field_175008_n", "viewFrustum");
 
 		for (Class<?> innerClass : RenderGlobal.class.getDeclaredClasses()) {
 			if (innerClass.getName().endsWith("ContainerLocalRenderInformation")) {
@@ -118,23 +115,8 @@ public class ChunkPreloader extends CaptureModule {
 		if (renderInfosField == null || renderDispatcherField == null || renderChunkField == null)
 			return;
 
-		if (Minema.instance.getConfig().forcePreloadChunks.get()/* && renderViewFrustum != null */) {
-//			try {
-//	            MC.renderGlobal.setDisplayListEntitiesDirty();
-//				ChunkRenderDispatcher chunks = (ChunkRenderDispatcher) renderDispatcherField.get(MC.renderGlobal);
-//				ViewFrustum frustum = (ViewFrustum) renderViewFrustum.get(MC.renderGlobal);
-//
-//				for (RenderChunk chunk : frustum.renderChunks) {
-//					if (chunk.getCompiledChunk() == CompiledChunk.DUMMY) {
-//						chunks.updateChunkNow(chunk);
-//					}
-//				}
-//			} catch (Exception e) {
-//				Utils.print("Could not force preload all chunks", TextFormatting.RED);
-//				Utils.printError(e);
-//			}
+		if (Minema.instance.getConfig().forcePreloadChunks.get())
 			forcePreload();
-		}
 
 		MinecraftForge.EVENT_BUS.register(this);
 	}
@@ -143,7 +125,6 @@ public class ChunkPreloader extends CaptureModule {
 	protected void doDisable() {
 		PrivateAccessor.setChunkUpdates(chunkUpdates);
 		PrivateAccessor.setLazyChunkLoading(lazyLoad);
-		forcePreload = false;
 		
 		MinecraftForge.EVENT_BUS.unregister(this);
 	}
