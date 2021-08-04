@@ -9,16 +9,7 @@
  */
 package info.ata4.minecraft.minema.client.engine;
 
-import org.apache.logging.log4j.LogManager;
-
-import info.ata4.minecraft.minema.CaptureSession;
 import info.ata4.minecraft.minema.Minema;
-import info.ata4.minecraft.minema.client.modules.SyncModule;
-import info.ata4.minecraft.minema.client.modules.SyncModule.PacketMinemaSync;
-import info.ata4.minecraft.minema.client.modules.modifiers.TimerModifier;
-import info.ata4.minecraft.minema.util.reflection.PrivateAccessor;
-import net.minecraft.client.Minecraft;
-//import info.ata4.minecraft.minema.client.modules.ShaderSync;
 import net.minecraft.util.Timer;
 
 /**
@@ -78,12 +69,10 @@ public class FixedTimer extends Timer {
 
 		if (canOutput) { // last frame can output
 			isFirstFrame = true;
-			// First frame has a server tick
-			if (ticks < 0) {
-				ticks = 0;
-				SyncModule.wakeServerTick();
-				PacketMinemaSync.await();
-			} else
+			// Skip current tick.
+			if (ticks < 0) 
+				ticks = 1;
+			else
 				ticks += timerSpeed * (ticksPerSecond / framesPerSecond);
 			elapsedTicks = (int) (float) ticks;
 			ticks -= elapsedTicks;
