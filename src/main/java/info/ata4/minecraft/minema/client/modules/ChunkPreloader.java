@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 
+import info.ata4.minecraft.minema.CaptureSession;
 import info.ata4.minecraft.minema.Minema;
 import info.ata4.minecraft.minema.Utils;
 import info.ata4.minecraft.minema.util.reflection.PrivateAccessor;
@@ -41,7 +42,7 @@ public class ChunkPreloader extends CaptureModule {
 	private boolean lazyLoad;
 
 	public static boolean skipCulling() {
-		return instance != null && instance.isEnabled() && Minema.instance.getConfig().vr.get() || Minema.instance.getConfig().disableCulling.get();
+		return CaptureSession.singleton.isEnabled() && Minema.instance.getConfig().vr.get() || Minema.instance.getConfig().disableCulling.get();
 	}
 	
 	public static void forcePreload() {
