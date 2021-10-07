@@ -31,28 +31,28 @@ import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.math.MathHelper;
 
 public class DepthbufferReader extends CommonReader {
-	
+
 	private static final int program = ShaderHelper.createShader(
 			DepthbufferReader.class.getResourceAsStream("/assets/minema/shaders/screen.vert"),
 			DepthbufferReader.class.getResourceAsStream("/assets/minema/shaders/depth.frag"));
-	
+
 	private float preCalcNear;
 	private ByteBuffer prebuffer;
-	
+
 	private ColorbufferReader proxy;
 	private int depthTex;
 	private int depthPbo;
-    
+
 	public DepthbufferReader(int width, int height, boolean isPBO, boolean isFBO, float customFar) {
 		super(width, height, 4, GL_FLOAT, GL_DEPTH_COMPONENT, isPBO, isFBO);
-		
+
 		customFar = customFar > 0 ? customFar : MC.gameSettings.renderDistanceChunks * 16;
 		preCalcNear = 0.1F / customFar;
-		
+
 		if (isPBO && isFBO && program > 0) {
 			GL20.glUseProgram(program);
 			GL20.glUniform1i(GL20.glGetUniformLocation(program, "tex"), 0);
-	        GL20.glUniform1f(GL20.glGetUniformLocation(program, "near"), 0.05f);
+			GL20.glUniform1f(GL20.glGetUniformLocation(program, "near"), 0.05f);
 			GL20.glUniform1f(GL20.glGetUniformLocation(program, "preCalcNear"), preCalcNear);
 			GL20.glUseProgram(0);
 
@@ -63,7 +63,7 @@ public class DepthbufferReader extends CommonReader {
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-			
+
 			depthPbo = glGenBuffersARB();
 			glBindBufferARB(PBO_TARGET, depthPbo);
 			glBufferDataARB(PBO_TARGET, bufferSize, GL_STREAM_COPY_ARB);
@@ -93,27 +93,35 @@ public class DepthbufferReader extends CommonReader {
 
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, depthTex);
 			glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, depthPbo);
-			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_DEPTH_COMPONENT, width, height, 0, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, 0);
+			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_DEPTH_COMPONENT, width, height, 0, GL11.GL_DEPTH_COMPONENT,
+					GL11.GL_FLOAT, 0);
 			glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
-			
+
 			boolean alpha = GL11.glIsEnabled(GL11.GL_ALPHA_TEST);
 			boolean blend = GL11.glIsEnabled(GL11.GL_BLEND);
 			boolean depth = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
 			boolean fog = GL11.glIsEnabled(GL11.GL_FOG);
-			
+
 			int prog = GlStateManager.glGetInteger(GL20.GL_CURRENT_PROGRAM);
 
 			GL20.glUseProgram(program);
 
-	        float far = MC.gameSettings.renderDistanceChunks * 16;
-	        if (PrivateAccessor.isShaderPackSupported()) {
-	            far *= 2;
-	            if (far < 173F)
-	                far = 173F;
-	        } else
-	            far *= MathHelper.SQRT_2;
-	        GL20.glUniform1f(GL20.glGetUniformLocation(program, "far"), far);
-	        
+			float far = MC.gameSettings.renderDistanceChunks * 16;
+			if (PrivateAccessor.isShaderPackSupported()) {
+				far *= 2;
+
+				if (PrivateAccessor.isFogFancy())
+					far *= 0.95F;
+
+				if (PrivateAccessor.isFogFast())
+					far *= 0.83F;
+
+				if (far < 173F)
+					far = 173F;
+			} else
+				far *= MathHelper.SQRT_2;
+			GL20.glUniform1f(GL20.glGetUniformLocation(program, "far"), far);
+
 			GlStateManager.disableAlpha();
 			GlStateManager.disableBlend();
 			GlStateManager.disableDepth();
@@ -133,7 +141,7 @@ public class DepthbufferReader extends CommonReader {
 			GL11.glVertex3f(1.0F, 1.0F, 1.0F);
 			GL11.glEnd();
 			GL11.glFlush();
-			
+
 			OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, lastfb);
 
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
@@ -178,18 +186,18 @@ public class DepthbufferReader extends CommonReader {
 			}
 
 			prebuffer.rewind();
-						
+
 			while (prebuffer.hasRemaining()) {
-	            float f = prebuffer.getFloat();
-	            byte b = (byte) (linearizeDepth(f) * 255);
-	            buffer.put(b);
-	            buffer.put(b);
-	            buffer.put(b);
-	        }
-			
+				float f = prebuffer.getFloat();
+				byte b = (byte) (linearizeDepth(f) * 255);
+				buffer.put(b);
+				buffer.put(b);
+				buffer.put(b);
+			}
+
 			prebuffer.rewind();
 			buffer.rewind();
-			
+
 			// first frame is empty in PBO mode, don't export it
 			if (isPBO & firstFrame) {
 				firstFrame = false;
@@ -199,30 +207,30 @@ public class DepthbufferReader extends CommonReader {
 			return true;
 		}
 	}
-	
-    @Override
+
+	@Override
 	public boolean readLastFrame() {
-    	if (proxy != null) {
-    		boolean ret = proxy.readLastFrame();
-    		this.buffer = proxy.buffer;
-    		return ret;
-    	} else if (isPBO && !firstFrame) {
+		if (proxy != null) {
+			boolean ret = proxy.readLastFrame();
+			this.buffer = proxy.buffer;
+			return ret;
+		} else if (isPBO && !firstFrame) {
 			glBindBufferARB(PBO_TARGET, backName);
 			prebuffer = glMapBufferARB(PBO_TARGET, PBO_ACCESS, bufferSize, prebuffer);
 			glUnmapBufferARB(PBO_TARGET);
 			glBindBufferARB(PBO_TARGET, 0);
-			
+
 			Util.checkGLError();
-			
+
 			prebuffer.rewind();
-			
+
 			while (prebuffer.hasRemaining()) {
-	            float f = prebuffer.getFloat();
-	            byte b = (byte) (linearizeDepth(f) * 255);
-	            buffer.put(b);
-	            buffer.put(b);
-	            buffer.put(b);
-	        }
+				float f = prebuffer.getFloat();
+				byte b = (byte) (linearizeDepth(f) * 255);
+				buffer.put(b);
+				buffer.put(b);
+				buffer.put(b);
+			}
 
 			prebuffer.rewind();
 			buffer.rewind();
@@ -234,7 +242,7 @@ public class DepthbufferReader extends CommonReader {
 	@Override
 	public void destroy() {
 		super.destroy();
-		
+
 		if (proxy != null) {
 			proxy.destroy();
 			proxy.fb.deleteFramebuffer();
@@ -245,14 +253,21 @@ public class DepthbufferReader extends CommonReader {
 	}
 
 	private float linearizeDepth(float z) {
-        final float near = 0.05f;
-        float far = MC.gameSettings.renderDistanceChunks * 16;
-        if (PrivateAccessor.isShaderPackSupported()) {
-            far *= 2;
-            if (far < 173F)
-                far = 173F;
-        } else
-            far *= MathHelper.SQRT_2;
-        return MathHelper.clamp(preCalcNear * far / (far + near - (2 * z - 1) * (far - near)), 0F, 1F);
-    }
+		final float near = 0.05f;
+		float far = MC.gameSettings.renderDistanceChunks * 16;
+		if (PrivateAccessor.isShaderPackSupported()) {
+			far *= 2;
+
+			if (PrivateAccessor.isFogFancy())
+				far *= 0.95F;
+
+			if (PrivateAccessor.isFogFast())
+				far *= 0.83F;
+
+			if (far < 173F)
+				far = 173F;
+		} else
+			far *= MathHelper.SQRT_2;
+		return MathHelper.clamp(preCalcNear * far / (far + near - (2 * z - 1) * (far - near)), 0F, 1F);
+	}
 }

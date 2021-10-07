@@ -37,6 +37,8 @@ public final class PrivateAccessor {
 	private static Optional<Field> ofCurrentShaderName;
 	private static Optional<Method> ofSetShaderPack;
 	private static Optional<Method> ofUninit;
+	private static Optional<Method> ofIsFogFast;
+	private static Optional<Method> ofIsFogFancy;
 	private static void lateLoadOptifineField() {
 		if (shaderpackSupport == null) {
 			try {
@@ -69,6 +71,12 @@ public final class PrivateAccessor {
 		}
 		if (ofUninit == null) {
 			ofUninit = Optional.ofNullable(getPublicMethod("net.optifine.shaders.Shaders", "uninit"));
+		}
+		if (ofIsFogFast == null) {
+			ofIsFogFast = Optional.ofNullable(getPublicMethod("Config", "isFogFast"));
+		}
+		if (ofIsFogFancy == null) {
+			ofIsFogFancy = Optional.ofNullable(getPublicMethod("Config", "isFogFancy"));
 		}
 	}
 
@@ -292,6 +300,32 @@ public final class PrivateAccessor {
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			}
 		}
+	}
+
+	public static boolean isFogFast() {
+		lateLoadOptifineField();
+		
+		if (ofIsFogFast.isPresent()) {
+			try {
+				return (boolean) ofIsFogFast.get().invoke(null);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			}
+		}
+
+		return false;
+	}
+
+	public static boolean isFogFancy() {
+		lateLoadOptifineField();
+		
+		if (ofIsFogFancy.isPresent()) {
+			try {
+				return (boolean) ofIsFogFancy.get().invoke(null);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			}
+		}
+
+		return false;
 	}
 
 	/*
