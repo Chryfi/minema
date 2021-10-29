@@ -19,8 +19,13 @@ public class Utils {
 	public static void printError(Throwable throwable) {
 		print(throwable.getClass().getName(), TextFormatting.RED);
 		print(throwable.getMessage(), TextFormatting.RED);
-		Throwable cause = throwable.getCause();
-		if (cause != null) {
+		Throwable cause = throwable;
+		Throwable cause2 = cause.getCause();
+		while (cause2 != null && cause2 != cause) {
+			cause = cause2;
+			cause2 = cause2.getCause();
+		}
+		if (cause != null && cause != throwable) {
 			print(I18n.format("minema.error.cause"), TextFormatting.RED);
 			print(cause.getClass().getName(), TextFormatting.RED);
 			print(cause.getMessage(), TextFormatting.RED);
@@ -30,13 +35,14 @@ public class Utils {
 	}
 
 	public static void printPrettyError(Throwable throwable) {
-		Throwable cause = throwable.getCause();
-
-		if (cause == null && throwable instanceof MinemaException) {
-			cause = throwable;
+		Throwable cause = throwable;
+		Throwable cause2 = cause.getCause();
+		while (cause2 != null && cause2 != cause) {
+			cause = cause2;
+			cause2 = cause2.getCause();
 		}
 
-		if (cause != null) {
+		if (cause != null && (cause != throwable || throwable instanceof MinemaException)) {
 			print(cause.getMessage() + "\n", TextFormatting.RED);
 		}
 
