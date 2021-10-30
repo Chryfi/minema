@@ -79,10 +79,10 @@ public class PipeFrameExporter extends FrameExporter {
 			if (!params.contains("%DEFVF%"))
 				throw new MinemaException(I18n.format("minema.error.require_defvf"));
 			else {
-				defvf += ",lutrgb=r=gammaval(2.2):g=gammaval(2.2):b=gammaval(2.2)";
+				defvf += cfg.motionBlurLinearMixing.get() ? ",format=pix_fmts=rgba64le,lutrgb=r=gammaval(2.2):g=gammaval(2.2):b=gammaval(2.2)" : "";
 				for (int i = 0; i < cfg.motionBlurLevel.get().getExp(cfg.frameRate.get()); i++)
 					defvf += ",tblend=all_mode=average,framestep=2";
-				defvf += ",lutrgb=r=gammaval(1/2.2):g=gammaval(1/2.2):b=gammaval(1/2.2)";
+				defvf += cfg.motionBlurLinearMixing.get() ? ",lutrgb=r=gammaval(1/2.2):g=gammaval(1/2.2):b=gammaval(1/2.2)" : "";
 			}
 		params = params.replace("%DEFVF%", defvf);
 

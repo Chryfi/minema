@@ -128,6 +128,9 @@ minema.config.exportAECamera.tooltip=Export frame data of One-Node Camera that c
 minema.config.motionBlurLevel=Motion Blur
 minema.config.motionBlurLevel.tooltip=Motion blur effect based on ffmpeg, only available when video encoding is enabled. The higher the quality of the blur, the longer and more exponential the rendering time, High and Ultra are only recommended for footage with a lot of motion.
 
+minema.config.motionBlurLinearMixing=Motion Blur Linear Mixing
+minema.config.motionBlurLinearMixing.tooltip=Convert the image to linear color space for blurring to ensure the correctness of the blur result, which can seriously slow down the export speed.
+
 # config engine
 minema.config.engineSpeed=Engine Speed
 minema.config.engineSpeed.tooltip=Speed modifier for the game clock. The default is 1.0, which equals 20 ticks per second. Lower or higher values will speed up or slow down the game time. 2.5, for example, results in two and a half of the normal speed. Useful for slow motion or time lapse effects. Ignored if the capturing is unsynchronized.

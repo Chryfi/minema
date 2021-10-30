@@ -54,7 +54,7 @@ public class MinemaConfig {
 	public final ConfigString videoEncoderParams = new ConfigString(
 			"-f rawvideo -pix_fmt bgr24 -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -c:v libx264 -preset ultrafast -tune zerolatency -qp 18 -pix_fmt yuv420p %NAME%.mp4");
 	public final ConfigString videoEncoderParamsAlpha = new ConfigString(
-			"-f rawvideo -pix_fmt rgb32 -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -c:v libx264 -preset ultrafast -tune zerolatency -qp 18 -pix_fmt yuv420p %NAME%_rgb.mp4 -vf alphaextract,%DEFVF%,format=yuv420p %NAME%_alpha.mp4");
+			"-f rawvideo -pix_fmt rgb32 -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -c:v libx264 -preset ultrafast -tune zerolatency -qp 18 -pix_fmt yuv420p %NAME%_rgb.mp4 -vf %DEFVF%,alphaextract,format=yuv420p %NAME%_alpha.mp4");
 	public final ConfigEnum<SnapResolution> snapResolution = new ConfigEnum<>(SnapResolution.MOD2);
 	public final ConfigBoolean enableEncoderLogging = new ConfigBoolean(true);
 
@@ -73,6 +73,7 @@ public class MinemaConfig {
 	public final ConfigBoolean useAlphaScreenshot = new ConfigBoolean(false);
 	public final ConfigBoolean exportAECamera = new ConfigBoolean(false);
 	public final ConfigEnum<MotionBlur> motionBlurLevel = new ConfigEnum<>(MotionBlur.DISABLE);
+	public final ConfigBoolean motionBlurLinearMixing = new ConfigBoolean(true);
 
 	public final ConfigDouble engineSpeed = new ConfigDouble(1.0, 0.01, 1200.0);
 	public final ConfigBoolean syncEngine = new ConfigBoolean(true);
@@ -129,6 +130,7 @@ public class MinemaConfig {
 		useAlphaScreenshot.link(cfg, CAPTURING_CATEGORY, "useAlphaScreenshot", LANG_KEY);
 		exportAECamera.link(cfg, CAPTURING_CATEGORY, "exportAECamera", LANG_KEY);
 		motionBlurLevel.link(cfg, CAPTURING_CATEGORY, "motionBlurLevel", LANG_KEY);
+		motionBlurLinearMixing.link(cfg, CAPTURING_CATEGORY, "motionBlurLinearMixing", LANG_KEY);
 
 		engineSpeed.link(cfg, ENGINE_CATEGORY, "engineSpeed", LANG_KEY);
 		syncEngine.link(cfg, ENGINE_CATEGORY, "syncEngine", LANG_KEY);

@@ -130,6 +130,9 @@ minema.config.exportAECamera.tooltip=导出可直接粘贴至After Effects中的
 minema.config.motionBlurLevel=运动模糊
 minema.config.motionBlurLevel.tooltip=基于ffmpeg的运动模糊特效，仅在启用视频编码后可用。模糊质量越高，渲染时间越长，且渲染时间呈指数增长，仅推荐在运动量极大的镜头中使用High和Ultra。
 
+minema.config.motionBlurLinearMixing=运动模糊线性混合
+minema.config.motionBlurLinearMixing.tooltip=将画面转换至线性空间进行混合以保证模糊结果的正确性，会严重降低导出速度。
+
 # config engine
 minema.config.engineSpeed=引擎速率
 minema.config.engineSpeed.tooltip=游戏时钟的速率修改器。默认值为 1.0，相当于每秒 20 Tick。更低或更高的值会加快或减慢游戏时间。例如，2.5，结果是正常速度的二分之一。对于慢动作或延时拍摄很有用。如果不启用捕获同步，此项将会被忽略。
