@@ -106,9 +106,8 @@ public class PipeFrameExporter extends FrameExporter {
 			// files, but like total unlogged crash...
 			//
 			// So yeah, I guess I'll just redirect it to a dummy file
-//			cfg.dummyLog.delete();
-//			pb.redirectOutput(cfg.dummyLog);
-			pb.inheritIO();
+			cfg.dummyLog.delete();
+			pb.redirectOutput(cfg.dummyLog);
 		}
 
 		try {
