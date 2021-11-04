@@ -141,6 +141,9 @@ minema.config.syncEngine.tooltip=If enabled, the local server and client runs sy
 minema.config.threadSync=Thread Synchronize
 minema.config.threadSync.tooltip=Turn on thread synchronization in single player (not just in recording) as a way to reduce multi-threaded latency issues, allowing some mods to run better (e.g. Aperture), but may cause lag.
 
+minema.config.entitySync=Entity Synchronize
+minema.config.entitySync.tooltip=Set the tick rate of the entity to the maximum.
+
 minema.config.preloadChunks=Preload Chunks
 minema.config.preloadChunks.tooltip=If enabled, Minema will heavily accelerate the chunk loading rate during recording. THIS IS ONLY TRULY EFFECTIVE ON LOCAL WORLDS!
 

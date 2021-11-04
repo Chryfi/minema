@@ -46,7 +46,7 @@ public class SyncModule extends CaptureModule {
 
 	// Called by ASM from EntityTrackerEntry & NetHandlerPlayClient
 	public static int getUpdateFrequency(int origin) {
-		return canSync() && origin == 3 ? 1 : origin;
+		return canSync() && Minema.instance.getConfig().entitySync.get() && (origin == 3 || origin == 2) ? 1 : origin;
 	}
 
 	private static AtomicBoolean isRemote = null;

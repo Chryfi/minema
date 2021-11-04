@@ -143,6 +143,9 @@ minema.config.syncEngine.tooltip=启用后，本地服务器和客户端会以�
 minema.config.threadSync=线程同步
 minema.config.threadSync.tooltip=在单人游戏中（不仅仅是录制中）开启线程同步，以此减少多线程延迟问题，这使得一些mod可以更好地运行（例如：Aperture），但可能会导致卡顿。
 
+minema.config.entitySync=实体同步
+minema.config.entitySync.tooltip=将实体更新刻同步率设为最大。
+
 minema.config.preloadChunks=区块预加载
 minema.config.preloadChunks.tooltip=启用后，Minema 会在录制过程中大幅提升区块加载速度。此项仅在本地世界才会起效！
 

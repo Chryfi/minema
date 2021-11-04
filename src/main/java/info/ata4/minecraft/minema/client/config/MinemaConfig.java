@@ -78,6 +78,7 @@ public class MinemaConfig {
 	public final ConfigDouble engineSpeed = new ConfigDouble(1.0, 0.01, 1200.0);
 	public final ConfigBoolean syncEngine = new ConfigBoolean(true);
 	public final ConfigBoolean threadSync = new ConfigBoolean(false);
+	public final ConfigBoolean entitySync = new ConfigBoolean(true);
 	public final ConfigBoolean preloadChunks = new ConfigBoolean(true);
 	public final ConfigBoolean forcePreloadChunks = new ConfigBoolean(false);
 	public final ConfigBoolean disableCulling = new ConfigBoolean(false);
@@ -135,6 +136,7 @@ public class MinemaConfig {
 		engineSpeed.link(cfg, ENGINE_CATEGORY, "engineSpeed", LANG_KEY);
 		syncEngine.link(cfg, ENGINE_CATEGORY, "syncEngine", LANG_KEY);
 		threadSync.link(cfg, ENGINE_CATEGORY, "threadSync", LANG_KEY);
+		entitySync.link(cfg, ENGINE_CATEGORY, "entitySync", LANG_KEY);
 		preloadChunks.link(cfg, ENGINE_CATEGORY, "preloadChunks", LANG_KEY);
 		forcePreloadChunks.link(cfg, ENGINE_CATEGORY, "forcePreloadChunks", LANG_KEY);
 		disableCulling.link(cfg, ENGINE_CATEGORY, "disableCulling", LANG_KEY);
