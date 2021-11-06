@@ -30,6 +30,7 @@ public final class PrivateAccessor {
 	// (Mod classes of which the corresponding mod is not yet loaded)
 	private static Boolean shaderpackSupport;
 	private static Optional<Field> Shaders_frameTimeCounter;
+	private static Optional<Field> Shaders_frameCounter;
 	private static Optional<Field> ofLazyChunkLoading;
 	private static Optional<Field> ofChunkUpdates;
 	private static Optional<Field> ofShaderPackLoaded;
@@ -50,6 +51,9 @@ public final class PrivateAccessor {
 		}
 		if (Shaders_frameTimeCounter == null) {
 			Shaders_frameTimeCounter = Optional.ofNullable(getAccessibleField("net.optifine.shaders.Shaders", "frameTimeCounter"));
+		}
+		if (Shaders_frameCounter == null) {
+			Shaders_frameCounter = Optional.ofNullable(getAccessibleField("net.optifine.shaders.Shaders", "frameCounter"));
 		}
 		if (ofLazyChunkLoading == null) {
 			ofLazyChunkLoading = Optional.ofNullable(getAccessibleField(GameSettings.class, "ofLazyChunkLoading"));
@@ -184,6 +188,33 @@ public final class PrivateAccessor {
 			try {
 				// this field is static, just using null as the object
 				Shaders_frameTimeCounter.get().setFloat(null, frameTimerCounter);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+			}
+		}
+	}
+
+	public static int getFrameCounter() {
+		lateLoadOptifineField();
+
+		if (Shaders_frameCounter.isPresent()) {
+			try {
+				// this field is static, just using null as the object
+				return Shaders_frameCounter.get().getInt(null);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+			}
+		}
+
+		// just a default
+		return 0;
+	}
+
+	public static void setFrameCounter(int frameCounter) {
+		lateLoadOptifineField();
+
+		if (Shaders_frameCounter.isPresent()) {
+			try {
+				// this field is static, just using null as the object
+				Shaders_frameCounter.get().setInt(null, frameCounter);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 			}
 		}

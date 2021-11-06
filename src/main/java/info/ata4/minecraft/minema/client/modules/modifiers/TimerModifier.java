@@ -90,6 +90,8 @@ public class TimerModifier extends CaptureModule {
 		// set fixed delay timer
 		timer = new FixedTimer(defaultTps, fps, speed);
 		PrivateAccessor.setMinecraftTimer(MC, timer);
+
+		PrivateAccessor.setFrameCounter(-1);
 	}
 
 	@Override
