@@ -19,6 +19,8 @@ minema.error.require_defvf=Motion blur is not available with the old encoder par
 minema.error.vr_not_support=Device does not support panoramic video export
 minema.error.file_exists=File %s already exists and cannot be exported.
 minema.error.vr_broken=Failed to write panoramic video metadata to file '%s', file may be broken.
+minema.error.sync.enable=[Minema] Failed to enable engine sync
+minema.error.sync.disable=[Minema] Failed to disable engine sync
 
 # GUI
 minema.gui.title=Video recording configuration
@@ -149,9 +151,6 @@ minema.config.preloadChunks.tooltip=If enabled, Minema will heavily accelerate t
 
 minema.config.forcePreloadChunks=Force preload chunks
 minema.config.forcePreloadChunks.tooltip=If Preload Chunks is enabled and this is also enabled, all chunks in render distance will be preloaded. THIS IS ONLY TRULY EFFECTIVE ON LOCAL WORLDS!
-
-minema.config.networkDelay=Delay for thread packets
-minema.config.networkDelay.tooltip=Sleep the client thread for receive and handle all server thread packets.
 
 minema.config.disableCulling=Disable Frustum Culling
 minema.config.disableCulling.tooltip=Force the game to render off screen chunks. This option will be automatically enabled when exporting panoramic video.
