@@ -57,7 +57,7 @@ public abstract class AbstractVideoHandler extends CaptureModule {
 
 		CaptureSession.singleton.setFilename(colorName);
 		customName = null;
-		colorReader = new ColorbufferReader(startWidth, startHeight, usePBO, useFBO, cfg.useAlpha.get());
+		colorReader = new ColorbufferReader(startWidth, startHeight, 1, usePBO, useFBO, cfg.useAlpha.get());
 		colorExport = usePipe ? new PipeFrameExporter(true) : new ImageFrameExporter(true);
 
 		if (recordDepth) {
@@ -77,9 +77,9 @@ public abstract class AbstractVideoHandler extends CaptureModule {
 			}
 		}
 
-		colorExport.enable(colorName, startWidth, startHeight);
+		colorExport.enable(colorName, startWidth, startHeight, 8);
 		if (depthExport != null)
-			depthExport.enable(depthName, startWidth, startHeight);
+			depthExport.enable(depthName, startWidth, startHeight, 16);
 
 		MinemaEventbus.midRenderBUS.registerListener((e) -> onRenderMid(e));
 		MinemaEventbus.endRenderBUS.registerListener((e) -> onRenderEnd(e));
