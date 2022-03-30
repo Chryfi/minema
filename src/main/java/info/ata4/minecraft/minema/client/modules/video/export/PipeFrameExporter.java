@@ -57,8 +57,8 @@ public class PipeFrameExporter extends FrameExporter {
 	}
 
 	@Override
-	public void enable(String movieName, int width, int height) throws Exception {
-		super.enable(movieName, width, height);
+	public void enable(String movieName, int width, int height, int bitsPerChannel) throws Exception {
+		super.enable(movieName, width, height, bitsPerChannel);
 
 		MinemaConfig cfg = Minema.instance.getConfig();
 		Path path = CaptureSession.singleton.getCaptureDir();
@@ -74,6 +74,12 @@ public class PipeFrameExporter extends FrameExporter {
 		params = params.replace("%HEIGHT%", String.valueOf(height));
 		params = params.replace("%FPS%", String.valueOf(cfg.getFrameRate()));
 		params = params.replace("%NAME%", movieName);
+
+		if (bitsPerChannel > 8)
+		{
+			params = params.replace("bgr24", "bgr48be");
+		}
+
 		String defvf = "vflip";
 		if (cfg.motionBlurLevel.get() != MotionBlur.DISABLE)
 			if (!params.contains("%DEFVF%"))

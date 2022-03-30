@@ -44,7 +44,7 @@ public class DepthbufferReader extends CommonReader {
 	private int depthPbo;
 
 	public DepthbufferReader(int width, int height, boolean isPBO, boolean isFBO, float customFar) {
-		super(width, height, 4, GL_FLOAT, GL_DEPTH_COMPONENT, isPBO, isFBO);
+		super(width, height, 4 * 2, GL_FLOAT, GL_DEPTH_COMPONENT, isPBO, isFBO);
 
 		customFar = customFar > 0 ? customFar : MC.gameSettings.renderDistanceChunks * 16;
 		preCalcNear = 0.1F / customFar;
@@ -69,12 +69,12 @@ public class DepthbufferReader extends CommonReader {
 			glBufferDataARB(PBO_TARGET, bufferSize, GL_STREAM_COPY_ARB);
 			glBindBufferARB(PBO_TARGET, 0);
 
-			proxy = new ColorbufferReader(width, height, isPBO, isFBO, false);
+			proxy = new ColorbufferReader(width, height, 2, isPBO, isFBO, false);
 			proxy.fb = new Framebuffer(width, height, false);
 		} else {
 			prebuffer = buffer;
 
-			buffer = ByteBuffer.allocateDirect(width * height * 3);
+			buffer = ByteBuffer.allocateDirect(width * height * 3 * 2);
 			buffer.rewind();
 		}
 	}
@@ -187,13 +187,7 @@ public class DepthbufferReader extends CommonReader {
 
 			prebuffer.rewind();
 
-			while (prebuffer.hasRemaining()) {
-				float f = prebuffer.getFloat();
-				byte b = (byte) (linearizeDepth(f) * 255);
-				buffer.put(b);
-				buffer.put(b);
-				buffer.put(b);
-			}
+			this.writeDepth();
 
 			prebuffer.rewind();
 			buffer.rewind();
@@ -224,13 +218,7 @@ public class DepthbufferReader extends CommonReader {
 
 			prebuffer.rewind();
 
-			while (prebuffer.hasRemaining()) {
-				float f = prebuffer.getFloat();
-				byte b = (byte) (linearizeDepth(f) * 255);
-				buffer.put(b);
-				buffer.put(b);
-				buffer.put(b);
-			}
+			this.writeDepth();
 
 			prebuffer.rewind();
 			buffer.rewind();
@@ -249,6 +237,18 @@ public class DepthbufferReader extends CommonReader {
 
 			glDeleteBuffersARB(depthPbo);
 			GL11.glDeleteTextures(depthTex);
+		}
+	}
+
+	private void writeDepth()
+	{
+		while (prebuffer.hasRemaining())
+		{
+			float f = prebuffer.getFloat();
+			short b = (short) (linearizeDepth(f) * 65535);
+			buffer.putShort(b);
+			buffer.putShort(b);
+			buffer.putShort(b);
 		}
 	}
 
