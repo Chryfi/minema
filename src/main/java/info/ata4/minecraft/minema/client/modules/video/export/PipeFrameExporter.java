@@ -57,8 +57,8 @@ public class PipeFrameExporter extends FrameExporter {
 	}
 
 	@Override
-	public void enable(String movieName, int width, int height, int bitsPerChannel) throws Exception {
-		super.enable(movieName, width, height, bitsPerChannel);
+	public void enable(String movieName, int width, int height) throws Exception {
+		super.enable(movieName, width, height);
 
 		MinemaConfig cfg = Minema.instance.getConfig();
 		Path path = CaptureSession.singleton.getCaptureDir();
@@ -69,16 +69,26 @@ public class PipeFrameExporter extends FrameExporter {
 			throw new MinemaException(I18n.format("minema.error.ffmpeg_not_exists", ffmpeg));
 		}
 
-		String params = this.isColor && cfg.useAlpha.get() ? cfg.videoEncoderParamsAlpha.get() : cfg.videoEncoderParams.get();
+		String params;
+
+		if (this.isColor && cfg.useAlpha.get())
+		{
+			params = cfg.videoEncoderParamsAlpha.get();
+		}
+		else if (!this.isColor)
+		{
+			//params = cfg.depthBufferBitDepth.get().getParams();
+			params = cfg.videoEncoderParamsDepth.get();
+		}
+		else
+		{
+			params = cfg.videoEncoderParams.get();
+		}
+
 		params = params.replace("%WIDTH%", String.valueOf(width));
 		params = params.replace("%HEIGHT%", String.valueOf(height));
 		params = params.replace("%FPS%", String.valueOf(cfg.getFrameRate()));
 		params = params.replace("%NAME%", movieName);
-
-		if (bitsPerChannel > 8)
-		{
-			params = params.replace("bgr24", "bgr48be");
-		}
 
 		String defvf = "vflip";
 		if (cfg.motionBlurLevel.get() != MotionBlur.DISABLE)

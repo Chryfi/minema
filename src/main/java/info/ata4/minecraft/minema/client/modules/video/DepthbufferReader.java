@@ -9,15 +9,11 @@ import static org.lwjgl.opengl.ARBBufferObject.glMapBufferARB;
 import static org.lwjgl.opengl.ARBBufferObject.glUnmapBufferARB;
 import static org.lwjgl.opengl.ARBPixelBufferObject.GL_PIXEL_PACK_BUFFER_ARB;
 import static org.lwjgl.opengl.ARBPixelBufferObject.GL_PIXEL_UNPACK_BUFFER_ARB;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_COMPONENT;
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_PACK_ALIGNMENT;
-import static org.lwjgl.opengl.GL11.GL_UNPACK_ALIGNMENT;
-import static org.lwjgl.opengl.GL11.glPixelStorei;
-import static org.lwjgl.opengl.GL11.glReadPixels;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.nio.ByteBuffer;
 
+import info.ata4.minecraft.minema.Minema;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
@@ -44,10 +40,13 @@ public class DepthbufferReader extends CommonReader {
 	private int depthPbo;
 
 	public DepthbufferReader(int width, int height, boolean isPBO, boolean isFBO, float customFar) {
-		super(width, height, 4 * 2, GL_FLOAT, GL_DEPTH_COMPONENT, isPBO, isFBO);
+		super(width, height, 4, GL_FLOAT, GL_DEPTH_COMPONENT, isPBO, isFBO);
 
 		customFar = customFar > 0 ? customFar : MC.gameSettings.renderDistanceChunks * 16;
 		preCalcNear = 0.1F / customFar;
+
+		int bytesPerChannel = Minema.instance.getConfig().depthBufferBitDepth.get().getBytesPerChannel();
+		int format = Minema.instance.getConfig().depthBufferBitDepth.get().getFormat();
 
 		if (isPBO && isFBO && program > 0) {
 			GL20.glUseProgram(program);
@@ -69,12 +68,12 @@ public class DepthbufferReader extends CommonReader {
 			glBufferDataARB(PBO_TARGET, bufferSize, GL_STREAM_COPY_ARB);
 			glBindBufferARB(PBO_TARGET, 0);
 
-			proxy = new ColorbufferReader(width, height, 2, isPBO, isFBO, false);
+			proxy = new ColorbufferReader(width, height, bytesPerChannel, format, isPBO, isFBO, false);
 			proxy.fb = new Framebuffer(width, height, false);
 		} else {
 			prebuffer = buffer;
 
-			buffer = ByteBuffer.allocateDirect(width * height * 3 * 2);
+			buffer = ByteBuffer.allocateDirect(width * height * 3 * bytesPerChannel);
 			buffer.rewind();
 		}
 	}
@@ -120,7 +119,7 @@ public class DepthbufferReader extends CommonReader {
 					far = 173F;
 			} else
 				far *= MathHelper.SQRT_2;
-			GL20.glUniform1f(GL20.glGetUniformLocation(program, "far"), far);
+			GL20.glUniform1f(GL20.glGetUniformLocation(program, "far"), this.calculateFar());
 
 			GlStateManager.disableAlpha();
 			GlStateManager.disableBlend();
@@ -160,10 +159,13 @@ public class DepthbufferReader extends CommonReader {
 			boolean ret = proxy.readPixels();
 			buffer = proxy.buffer;
 			return ret;
-		} else {
+		}
+		else
+		{
 			// Cannot read Minecraft's framebuffer even if it is active, as the depth buffer
 			// is not a texture
-			if (isPBO) {
+			if (isPBO)
+			{
 				glBindBufferARB(PBO_TARGET, frontName);
 
 				glReadPixels(0, 0, width, height, FORMAT, TYPE, 0);
@@ -181,7 +183,9 @@ public class DepthbufferReader extends CommonReader {
 				int swapName = frontName;
 				frontName = backName;
 				backName = swapName;
-			} else {
+			}
+			else
+			{
 				glReadPixels(0, 0, width, height, FORMAT, TYPE, prebuffer);
 			}
 
@@ -193,8 +197,10 @@ public class DepthbufferReader extends CommonReader {
 			buffer.rewind();
 
 			// first frame is empty in PBO mode, don't export it
-			if (isPBO & firstFrame) {
+			if (isPBO & firstFrame)
+			{
 				firstFrame = false;
+
 				return false;
 			}
 
@@ -244,30 +250,64 @@ public class DepthbufferReader extends CommonReader {
 	{
 		while (prebuffer.hasRemaining())
 		{
-			float f = prebuffer.getFloat();
-			short b = (short) (linearizeDepth(f) * 65535);
-			buffer.putShort(b);
-			buffer.putShort(b);
-			buffer.putShort(b);
+			float depth = prebuffer.getFloat();
+
+			switch (Minema.instance.getConfig().depthBufferBitDepth.get())
+			{
+				case BIT8:
+					byte b = (byte) (this.linearizeDepth(depth) * (Math.pow(2,8) - 1));
+
+					buffer.put(b);
+					buffer.put(b);
+					buffer.put(b);
+
+					break;
+				case BIT16:
+					short s = (short) (this.linearizeDepth(depth) * (Math.pow(2,16) - 1));
+
+					buffer.putShort(s);
+					buffer.putShort(s);
+					buffer.putShort(s);
+
+					break;
+				case BIT32:
+					float f = this.linearizeDepth(depth);
+
+					buffer.putFloat(f);
+					buffer.putFloat(f);
+					buffer.putFloat(f);
+
+					break;
+			}
 		}
 	}
 
 	private float linearizeDepth(float z) {
 		final float near = 0.05f;
+		float far = this.calculateFar();
+
+		return MathHelper.clamp(preCalcNear * far / (far + near - (2 * z - 1) * (far - near)), 0F, 1F);
+	}
+
+	private float calculateFar()
+	{
 		float far = MC.gameSettings.renderDistanceChunks * 16;
-		if (PrivateAccessor.isShaderPackSupported()) {
+
+		if (PrivateAccessor.isShaderPackSupported())
+		{
 			far *= 2;
 
-			if (PrivateAccessor.isFogFancy())
-				far *= 0.95F;
+			if (PrivateAccessor.isFogFancy()) far *= 0.95F;
 
-			if (PrivateAccessor.isFogFast())
-				far *= 0.83F;
+			if (PrivateAccessor.isFogFast()) far *= 0.83F;
 
-			if (far < 173F)
-				far = 173F;
-		} else
+			if (far < 173F) far = 173F;
+		}
+		else
+		{
 			far *= MathHelper.SQRT_2;
-		return MathHelper.clamp(preCalcNear * far / (far + near - (2 * z - 1) * (far - near)), 0F, 1F);
+		}
+
+		return far;
 	}
 }

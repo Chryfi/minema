@@ -32,7 +32,6 @@ public abstract class AbstractVideoHandler extends CaptureModule {
 	protected FrameExporter depthExport;
 
 	protected String colorName;
-	protected String depthName;
 	
 	protected boolean recordDepth;
 
@@ -41,13 +40,13 @@ public abstract class AbstractVideoHandler extends CaptureModule {
 	protected boolean recordGui;
 
 	@Override
-	protected void doEnable() throws Exception {
+	protected void doEnable() throws Exception
+	{
 		MinemaConfig cfg = Minema.instance.getConfig();
 
 		this.startWidth = MC.displayWidth;
 		this.startHeight = MC.displayHeight;
 		this.colorName = customName == null || customName.isEmpty() ? new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date()) : customName;
-		this.depthName = colorName.concat("depthBuffer");
 		this.recordGui = cfg.recordGui.get();
         this.recordDepth = cfg.captureDepth.get();
 
@@ -60,26 +59,33 @@ public abstract class AbstractVideoHandler extends CaptureModule {
 		colorReader = new ColorbufferReader(startWidth, startHeight, 1, usePBO, useFBO, cfg.useAlpha.get());
 		colorExport = usePipe ? new PipeFrameExporter(true) : new ImageFrameExporter(true);
 
-		if (recordDepth) {
+		if (recordDepth)
+		{
 			depthReader = new DepthbufferReader(startWidth, startHeight, usePBO, useFBO, cfg.captureDepthDistance.get().floatValue());
 			depthExport = usePipe ? new PipeFrameExporter(false) : new ImageFrameExporter(false);
 		}
 
-		if (!Minema.instance.getConfig().useVideoEncoder.get()) {
+		if (!cfg.useVideoEncoder.get())
+		{
 			Path colorDir = CaptureSession.singleton.getCaptureDir().resolve(colorName);
-			Path depthDir = CaptureSession.singleton.getCaptureDir().resolve(depthName);
+			Path depthDir = CaptureSession.singleton.getCaptureDir().resolve(colorName);
 
-			if (!Files.exists(colorDir)) {
+			if (!Files.exists(colorDir))
+			{
 				Files.createDirectory(colorDir);
 			}
-			if (recordDepth && !Files.exists(depthDir)) {
+			if (recordDepth && !Files.exists(depthDir))
+			{
 				Files.createDirectory(depthDir);
 			}
 		}
 
-		colorExport.enable(colorName, startWidth, startHeight, 8);
+		colorExport.enable(colorName, startWidth, startHeight);
+
 		if (depthExport != null)
-			depthExport.enable(depthName, startWidth, startHeight, 16);
+		{
+			depthExport.enable(colorName, startWidth, startHeight);
+		}
 
 		MinemaEventbus.midRenderBUS.registerListener((e) -> onRenderMid(e));
 		MinemaEventbus.endRenderBUS.registerListener((e) -> onRenderEnd(e));

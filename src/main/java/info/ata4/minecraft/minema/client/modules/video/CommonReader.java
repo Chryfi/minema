@@ -57,7 +57,7 @@ public abstract class CommonReader {
 	protected int backName;
 	protected boolean firstFrame;
 
-	public CommonReader(int width, int height, int BPP, int TYPE, int FORMAT, boolean isPBO, boolean isFBO) {
+	public CommonReader(int width, int height, int bytesPerPixel, int TYPE, int FORMAT, boolean isPBO, boolean isFBO) {
 		this.TYPE = TYPE;
 		this.FORMAT = FORMAT;
 		this.isPBO = isPBO;
@@ -65,9 +65,10 @@ public abstract class CommonReader {
 		this.width = width;
 		this.height = height;
 
-		bufferSize = width * height * BPP;
+		this.bufferSize = width * height * bytesPerPixel;
 
-		if (isPBO) {
+		if (isPBO)
+		{
 			frontName = glGenBuffersARB();
 			glBindBufferARB(PBO_TARGET, frontName);
 			glBufferDataARB(PBO_TARGET, bufferSize, PBO_USAGE);
@@ -79,8 +80,11 @@ public abstract class CommonReader {
 			glBindBufferARB(PBO_TARGET, 0);
 
 			firstFrame = true;
-		} else {
+		}
+		else
+		{
 			this.buffer = ByteBuffer.allocateDirect(bufferSize);
+
 			buffer.rewind();
 		}
 	}
