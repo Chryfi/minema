@@ -14,6 +14,7 @@ import static org.lwjgl.opengl.GL11.*;
 import java.nio.ByteBuffer;
 
 import info.ata4.minecraft.minema.Minema;
+import info.ata4.minecraft.minema.client.config.enums.BitDepth;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
@@ -45,10 +46,11 @@ public class DepthbufferReader extends CommonReader {
 		customFar = customFar > 0 ? customFar : MC.gameSettings.renderDistanceChunks * 16;
 		preCalcNear = 0.1F / customFar;
 
-		int bytesPerChannel = Minema.instance.getConfig().depthBufferBitDepth.get().getBytesPerChannel();
-		int format = Minema.instance.getConfig().depthBufferBitDepth.get().getFormat();
+		BitDepth bitDepth = Minema.instance.getConfig().depthBufferBitDepth.get();
+		int bytesPerChannel = bitDepth.getBytesPerChannel();
+		int format = bitDepth.getFormat();
 
-		if (isPBO && isFBO && program > 0) {
+		/*if (isPBO && isFBO && program > 0) {
 			GL20.glUseProgram(program);
 			GL20.glUniform1i(GL20.glGetUniformLocation(program, "tex"), 0);
 			GL20.glUniform1f(GL20.glGetUniformLocation(program, "near"), 0.05f);
@@ -70,12 +72,12 @@ public class DepthbufferReader extends CommonReader {
 
 			proxy = new ColorbufferReader(width, height, bytesPerChannel, format, isPBO, isFBO, false);
 			proxy.fb = new Framebuffer(width, height, false);
-		} else {
+		} else {*/
 			prebuffer = buffer;
 
-			buffer = ByteBuffer.allocateDirect(width * height * 3 * bytesPerChannel);
+			buffer = ByteBuffer.allocateDirect(width * height * ((bitDepth == BitDepth.BIT32) ? 1 : 3) * bytesPerChannel);
 			buffer.rewind();
-		}
+		//}
 	}
 
 	@Override
@@ -255,7 +257,7 @@ public class DepthbufferReader extends CommonReader {
 			switch (Minema.instance.getConfig().depthBufferBitDepth.get())
 			{
 				case BIT8:
-					byte b = (byte) (this.linearizeDepth(depth) * (Math.pow(2,8) - 1));
+					byte b = (byte) (this.linearizeDepth(depth) * (Math.pow(2, 8) - 1));
 
 					buffer.put(b);
 					buffer.put(b);
@@ -263,7 +265,7 @@ public class DepthbufferReader extends CommonReader {
 
 					break;
 				case BIT16:
-					short s = (short) (this.linearizeDepth(depth) * (Math.pow(2,16) - 1));
+					short s = (short) (this.linearizeDepth(depth) * (Math.pow(2, 16) - 1));
 
 					buffer.putShort(s);
 					buffer.putShort(s);
@@ -273,8 +275,6 @@ public class DepthbufferReader extends CommonReader {
 				case BIT32:
 					float f = this.linearizeDepth(depth);
 
-					buffer.putFloat(f);
-					buffer.putFloat(f);
 					buffer.putFloat(f);
 
 					break;
