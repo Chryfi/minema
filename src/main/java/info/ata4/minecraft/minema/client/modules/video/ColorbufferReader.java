@@ -20,8 +20,14 @@ public class ColorbufferReader extends CommonReader {
 
 	public Framebuffer fb;
 	
-	public ColorbufferReader(int width, int height, int bytesPerChannel, boolean isPBO, boolean isFBO, boolean isAlpha) {
+	public ColorbufferReader(int width, int height, int bytesPerChannel, boolean isPBO, boolean isFBO, boolean isAlpha)
+	{
 		super(width, height, bytesPerChannel * (isAlpha ? 4 : 3), GL_UNSIGNED_BYTE, isAlpha ? GL_BGRA : GL_BGR, isPBO, isFBO);
+	}
+
+	public ColorbufferReader(int width, int height, int bytesPerChannel, int FORMAT, boolean isPBO, boolean isFBO, boolean isAlpha)
+	{
+		super(width, height, bytesPerChannel * (isAlpha ? 4 : 3), FORMAT, isAlpha ? GL_BGRA : GL_BGR, isPBO, isFBO);
 	}
 
 	@Override

@@ -154,7 +154,7 @@ public class VRVideoHandler extends AbstractVideoHandler {
 				params = paramStr.split(" ");
 				for (String param : params) {
 					if (param.endsWith(".mp4")) {
-						String filename = param.replace("%NAME%", depthName);
+						String filename = param.replace("%NAME%", colorName + "depthBuffer");
 						if (Files.exists(CaptureSession.singleton.getCaptureDir().resolve(filename))) {
 							outputs.clear();
 							throw new MinemaException(I18n.format("minema.error.file_exists", filename));

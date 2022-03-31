@@ -23,7 +23,6 @@ public abstract class FrameExporter {
 	protected String movieName;
 	protected int width;
 	protected int height;
-	protected int bitsPerChannel;
 	protected ExecutorService exportService;
 	protected Future<?> exportFuture;
 
@@ -31,11 +30,10 @@ public abstract class FrameExporter {
 		exportService = Executors.newSingleThreadExecutor();
 	}
 
-	public void enable(String movieName, int width, int height, int bitsPerChannel) throws Exception {
+	public void enable(String movieName, int width, int height) throws Exception {
 		this.movieName = movieName;
 		this.width = width;
 		this.height = height;
-		this.bitsPerChannel = bitsPerChannel;
 	}
 
 	public void destroy() throws Exception {

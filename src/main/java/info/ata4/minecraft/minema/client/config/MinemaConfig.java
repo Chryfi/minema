@@ -9,6 +9,7 @@
  */
 package info.ata4.minecraft.minema.client.config;
 
+import info.ata4.minecraft.minema.client.config.enums.BitDepth;
 import info.ata4.minecraft.minema.client.config.enums.MotionBlur;
 import info.ata4.minecraft.minema.client.config.enums.SnapResolution;
 import info.ata4.minecraft.minema.util.config.ConfigBoolean;
@@ -55,6 +56,9 @@ public class MinemaConfig {
 			"-f rawvideo -pix_fmt bgr24 -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -c:v libx264 -preset ultrafast -tune zerolatency -qp 18 -pix_fmt yuv420p %NAME%.mp4");
 	public final ConfigString videoEncoderParamsAlpha = new ConfigString(
 			"-f rawvideo -pix_fmt rgb32 -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -c:v libx264 -preset ultrafast -tune zerolatency -qp 18 -pix_fmt yuv420p %NAME%_rgb.mp4 -vf %DEFVF%,alphaextract,format=yuv420p %NAME%_alpha.mp4");
+	public final ConfigString videoEncoderParamsDepth = new ConfigString(
+			"-f rawvideo -pix_fmt bgr48be -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -preset ultrafast -tune zerolatency -qp 6 -pix_fmt bgr48be %NAME%_depth_%d.png");
+	public final ConfigEnum<BitDepth> depthBufferBitDepth = new ConfigEnum<>(BitDepth.BIT16);
 	public final ConfigEnum<SnapResolution> snapResolution = new ConfigEnum<>(SnapResolution.MOD2);
 	public final ConfigBoolean enableEncoderLogging = new ConfigBoolean(true);
 
@@ -113,6 +117,8 @@ public class MinemaConfig {
 		videoEncoderPath.link(cfg, ENCODING_CATEGORY, "videoEncoderPath", LANG_KEY);
 		videoEncoderParams.link(cfg, ENCODING_CATEGORY, "videoEncoderParams", LANG_KEY);
 		videoEncoderParamsAlpha.link(cfg, ENCODING_CATEGORY, "videoEncoderParamsAlpha", LANG_KEY);
+		videoEncoderParamsDepth.link(cfg, ENCODING_CATEGORY, "videoEncoderParamsDepth", LANG_KEY);
+		depthBufferBitDepth.link(cfg, ENCODING_CATEGORY, "depthBufferBitDepth", LANG_KEY);
 		snapResolution.link(cfg, ENCODING_CATEGORY, "snapResolution", LANG_KEY);
 		enableEncoderLogging.link(cfg, ENCODING_CATEGORY, "enableEncoderLogging", LANG_KEY);
 
