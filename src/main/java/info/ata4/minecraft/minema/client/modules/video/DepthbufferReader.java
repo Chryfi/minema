@@ -1,6 +1,5 @@
 package info.ata4.minecraft.minema.client.modules.video;
 
-import static org.lwjgl.opengl.ARBBufferObject.GL_STREAM_COPY_ARB;
 import static org.lwjgl.opengl.ARBBufferObject.glBindBufferARB;
 import static org.lwjgl.opengl.ARBBufferObject.glBufferDataARB;
 import static org.lwjgl.opengl.ARBBufferObject.glDeleteBuffersARB;
@@ -24,7 +23,6 @@ import info.ata4.minecraft.minema.client.util.ShaderHelper;
 import info.ata4.minecraft.minema.util.reflection.PrivateAccessor;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.math.MathHelper;
 
 public class DepthbufferReader extends CommonReader {
@@ -35,6 +33,7 @@ public class DepthbufferReader extends CommonReader {
 
 	private float preCalcNear;
 	private ByteBuffer prebuffer;
+	private float customFar;
 
 	private ColorbufferReader proxy;
 	private int depthTex;
@@ -43,8 +42,8 @@ public class DepthbufferReader extends CommonReader {
 	public DepthbufferReader(int width, int height, boolean isPBO, boolean isFBO, float customFar) {
 		super(width, height, 4, GL_FLOAT, GL_DEPTH_COMPONENT, isPBO, isFBO);
 
-		customFar = customFar > 0 ? customFar : MC.gameSettings.renderDistanceChunks * 16;
-		preCalcNear = 0.1F / customFar;
+		this.customFar = customFar > 0 ? customFar : MC.gameSettings.renderDistanceChunks * 16;
+		preCalcNear = 0.1F / this.customFar;
 
 		BitDepth bitDepth = Minema.instance.getConfig().depthBufferBitDepth.get();
 		int bytesPerChannel = bitDepth.getBytesPerChannel();
@@ -75,7 +74,7 @@ public class DepthbufferReader extends CommonReader {
 		} else {*/
 			prebuffer = buffer;
 
-			buffer = ByteBuffer.allocateDirect(width * height * ((bitDepth == BitDepth.BIT32) ? 1 : 3) * bytesPerChannel);
+			buffer = ByteBuffer.allocateDirect(width * height * bitDepth.getChannels() * bytesPerChannel);
 			buffer.rewind();
 		//}
 	}
@@ -264,7 +263,7 @@ public class DepthbufferReader extends CommonReader {
 					buffer.put(b);
 
 					break;
-				case BIT16:
+				case BIT16CHANNELS3:
 					short s = (short) (this.linearizeDepth(depth) * (Math.pow(2, 16) - 1));
 
 					buffer.putShort(s);
@@ -272,7 +271,16 @@ public class DepthbufferReader extends CommonReader {
 					buffer.putShort(s);
 
 					break;
-				case BIT32:
+				case BIT16CHANNELS4:
+					short s2 = (short) (this.linearizeDepth(depth) * (Math.pow(2, 16) - 1));
+
+					buffer.putShort(s2);
+					buffer.putShort(s2);
+					buffer.putShort(s2);
+					buffer.putShort((short) (this.customFar));
+
+					break;
+				case BIT32F:
 					float f = this.linearizeDepth(depth);
 
 					buffer.putFloat(f);
@@ -286,7 +294,9 @@ public class DepthbufferReader extends CommonReader {
 		final float near = 0.05f;
 		float far = this.calculateFar();
 
-		return MathHelper.clamp(preCalcNear * far / (far + near - (2 * z - 1) * (far - near)), 0F, 1F);
+		float depth = preCalcNear * far / (far + near - (2 * z - 1) * (far - near));
+
+		return MathHelper.clamp(depth, 0F, 1F);
 	}
 
 	private float calculateFar()

@@ -58,7 +58,7 @@ public class MinemaConfig {
 			"-f rawvideo -pix_fmt rgb32 -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -c:v libx264 -preset ultrafast -tune zerolatency -qp 18 -pix_fmt yuv420p %NAME%_rgb.mp4 -vf %DEFVF%,alphaextract,format=yuv420p %NAME%_alpha.mp4");
 	public final ConfigString videoEncoderParamsDepth = new ConfigString(
 			"-f rawvideo -pix_fmt bgr48be -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -preset ultrafast -tune zerolatency -qp 6 -pix_fmt bgr48be %NAME%_depth_%d.png");
-	public final ConfigEnum<BitDepth> depthBufferBitDepth = new ConfigEnum<>(BitDepth.BIT16);
+	public final ConfigEnum<BitDepth> depthBufferBitDepth = new ConfigEnum<>(BitDepth.BIT16CHANNELS3);
 	public final ConfigEnum<SnapResolution> snapResolution = new ConfigEnum<>(SnapResolution.MOD2);
 	public final ConfigBoolean enableEncoderLogging = new ConfigBoolean(true);
 
