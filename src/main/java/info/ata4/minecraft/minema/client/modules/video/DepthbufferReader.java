@@ -249,11 +249,13 @@ public class DepthbufferReader extends CommonReader {
 
 	private void writeDepth()
 	{
+		BitDepth bitDepth = Minema.instance.getConfig().depthBufferBitDepth.get();
+
 		while (prebuffer.hasRemaining())
 		{
 			float depth = prebuffer.getFloat();
 
-			switch (Minema.instance.getConfig().depthBufferBitDepth.get())
+			switch (bitDepth)
 			{
 				case BIT8:
 					byte b = (byte) (this.linearizeDepth(depth) * (Math.pow(2, 8) - 1));
@@ -283,14 +285,15 @@ public class DepthbufferReader extends CommonReader {
 				case BIT32F:
 					float f = this.linearizeDepth(depth);
 
-					buffer.putFloat(f);
+					buffer.putFloat(f * this.customFar);
 
 					break;
 			}
 		}
 	}
 
-	private float linearizeDepth(float z) {
+	private float linearizeDepth(float z)
+	{
 		final float near = 0.05f;
 		float far = this.calculateFar();
 
