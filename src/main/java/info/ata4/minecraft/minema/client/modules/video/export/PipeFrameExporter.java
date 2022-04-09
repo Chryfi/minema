@@ -12,6 +12,7 @@ package info.ata4.minecraft.minema.client.modules.video.export;
 import info.ata4.minecraft.minema.CaptureSession;
 import info.ata4.minecraft.minema.Minema;
 import info.ata4.minecraft.minema.client.config.MinemaConfig;
+import info.ata4.minecraft.minema.client.config.enums.BitDepth;
 import info.ata4.minecraft.minema.client.config.enums.MotionBlur;
 import info.ata4.minecraft.minema.client.modules.modifiers.TimerModifier;
 import info.ata4.minecraft.minema.client.util.CaptureTime;
@@ -29,6 +30,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -77,8 +79,17 @@ public class PipeFrameExporter extends FrameExporter {
 		}
 		else if (!this.isColor)
 		{
-			//params = cfg.depthBufferBitDepth.get().getParams();
 			params = cfg.videoEncoderParamsDepth.get();
+
+			if (cfg.depthBufferBitDepth.get() != BitDepth.BIT8)
+			{
+				String depthSequencePath = path.toUri().toString().replace("file:///", "") + movieName + "_depth/";
+
+				if (new File(depthSequencePath).mkdirs())
+				{
+					path = Paths.get(depthSequencePath);
+				}
+			}
 		}
 		else
 		{
