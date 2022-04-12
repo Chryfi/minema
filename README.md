@@ -7,7 +7,7 @@ A Minecraft mod for offline rendering and video capturing.
 Butter smooth 1080p60, supersampled from 4K, up to 64 chunks render distance and up to 4096x4096 shadow maps. Recorded on a single GTX 750 Ti.
 
 **Current features:**
-- Records the game, both color and optionally **depth**
+- Records the game, both color and optionally **alpha** or **depth (8bit, 16bit or 32bit float variant)**
 - Automatically exports every frame as TGA or encodes it to a single mp4 video file (h264, yuv420p color format) using [FFMpeg](https://www.ffmpeg.org/)
 - Synchronizes the game engine and [OptiFine](https://optifine.net/home)'s/[karyonix](https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-mods/1286604-shaders-mod-updated-by-karyonix)'s shader pipeline from real time to the video recording framerate
 - Possible to set any resolution for recording, even higher than your screen resolution
