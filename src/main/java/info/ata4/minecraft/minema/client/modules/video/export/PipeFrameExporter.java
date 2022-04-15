@@ -102,15 +102,39 @@ public class PipeFrameExporter extends FrameExporter {
 		params = params.replace("%NAME%", movieName);
 
 		String defvf = "vflip";
+
 		if (cfg.motionBlurLevel.get() != MotionBlur.DISABLE)
+		{
 			if (!params.contains("%DEFVF%"))
+			{
 				throw new MinemaException(I18n.format("minema.error.require_defvf"));
-			else {
-				defvf += cfg.motionBlurLinearMixing.get() ? ",format=pix_fmts=rgba64le,lutrgb=r=gammaval(2.2):g=gammaval(2.2):b=gammaval(2.2)" : "";
-				for (int i = 0; i < cfg.motionBlurLevel.get().getExp(cfg.frameRate.get()); i++)
-					defvf += ",tblend=all_mode=average,framestep=2";
-				defvf += cfg.motionBlurLinearMixing.get() ? ",lutrgb=r=gammaval(1/2.2):g=gammaval(1/2.2):b=gammaval(1/2.2)" : "";
 			}
+			else
+			{
+				if (this.isColor)
+				{
+					defvf += cfg.motionBlurLinearMixing.get() ? ",format=pix_fmts=rgba64le,lutrgb=r=gammaval(2.2):g=gammaval(2.2):b=gammaval(2.2)" : "";
+				}
+
+				for (int i = 0; i < cfg.motionBlurLevel.get().getExp(cfg.frameRate.get()); i++)
+				{
+					if (this.isColor)
+					{
+						defvf += ",tblend=all_mode=average,framestep=2";
+					}
+					else
+					{
+						defvf += ",tblend=all_mode=normal,framestep=2";
+					}
+				}
+
+				if (this.isColor)
+				{
+					defvf += cfg.motionBlurLinearMixing.get() ? ",lutrgb=r=gammaval(1/2.2):g=gammaval(1/2.2):b=gammaval(1/2.2)" : "";
+				}
+			}
+		}
+
 		params = params.replace("%DEFVF%", defvf);
 
 		List<String> cmds = new ArrayList<>();
