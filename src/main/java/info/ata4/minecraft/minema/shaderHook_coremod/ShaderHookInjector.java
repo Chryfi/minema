@@ -21,7 +21,6 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import info.ata4.minecraft.minema.client.modules.SyncModule;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -46,10 +45,11 @@ public final class ShaderHookInjector implements IClassTransformer {
 	private static final String clippingHelper = "net.minecraft.client.renderer.culling.ClippingHelper";
 	private static final String minecraft = "net.minecraft.client.Minecraft";
 	private static final String mouseHelper = "net.minecraft.util.MouseHelper";
-	
+	private static final String guiCyclicEntry = "net.minecraftforge.fml.client.config.GuiConfigEntries$CycleValueEntry";
+
 	@Override
-	public byte[] transform(final String obfuscated, final String deobfuscated, final byte[] bytes) {		
-		
+	public byte[] transform(final String obfuscated, final String deobfuscated, final byte[] bytes)
+	{
 		// "Deobfuscated" is always passed as a deobfuscated argument, but the
 		// "obfuscated" argument may be deobfuscated or obfuscated
 		if (entityRenderer.equals(deobfuscated) || minecraftServer.equals(deobfuscated)
@@ -59,7 +59,9 @@ public final class ShaderHookInjector implements IClassTransformer {
 				|| netHandlerPlayClient.equals(deobfuscated)
 				|| clippingHelper.equals(deobfuscated)
 				|| minecraft.equals(deobfuscated)
-				|| mouseHelper.equals(deobfuscated)) {
+				|| mouseHelper.equals(deobfuscated)
+				|| guiCyclicEntry.equals(deobfuscated))
+		{
 
 			final ClassReader classReader = new ClassReader(bytes);
 			final ClassNode classNode = new ClassNode();
@@ -85,6 +87,10 @@ public final class ShaderHookInjector implements IClassTransformer {
 				this.transformMinecraft(classNode, isInAlreadyDeobfuscatedState);
 			} else if (mouseHelper.equals(deobfuscated)) {
 				this.transformMouseHelper(classNode, isInAlreadyDeobfuscatedState);
+			}
+			else if (guiCyclicEntry.equals(deobfuscated))
+			{
+				this.transformCycleValueEntry(classNode, isInAlreadyDeobfuscatedState);
 			}
 
 			final ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
@@ -156,6 +162,36 @@ public final class ShaderHookInjector implements IClassTransformer {
 							break;
 						}
 					}
+				}
+			}
+		}
+	}
+
+	private void transformCycleValueEntry(ClassNode classNode, boolean isInAlreadyDeobfuscatedState)
+	{
+		final String method = "updateValueButtonText";
+
+		for (final MethodNode m : classNode.methods)
+		{
+			if (method.equals(m.name) && "()V".equals(m.desc))
+			{
+				ListIterator<AbstractInsnNode> iterator = m.instructions.iterator();
+
+				while (iterator.hasNext())
+				{
+					AbstractInsnNode currentNode = iterator.next();
+
+					if (currentNode instanceof FieldInsnNode)
+					{
+						FieldInsnNode fieldInsnNode = (FieldInsnNode) currentNode;
+
+						if (Opcodes.PUTFIELD == fieldInsnNode.getOpcode())
+						{
+							iterator.add(new VarInsnNode(Opcodes.ALOAD, 0));
+							iterator.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "info/ata4/minecraft/minema/client/config/MinemaConfig", "ASMAfterCyclicEntryUpdateText", "(Lnet/minecraftforge/fml/client/config/GuiConfigEntries$CycleValueEntry;)V", false));
+						}
+					}
+
 				}
 			}
 		}

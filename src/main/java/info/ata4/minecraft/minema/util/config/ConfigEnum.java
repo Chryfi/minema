@@ -47,7 +47,7 @@ public class ConfigEnum<T extends Enum<T>> extends ConfigValue<T> {
 	}
 
 	@Override
-	protected Property getProp() {
+	public Property getProp() {
 		Property prop = super.getProp();
 		prop.setValidValues(validValues);
 		return prop;

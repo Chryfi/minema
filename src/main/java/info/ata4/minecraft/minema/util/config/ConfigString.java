@@ -32,6 +32,13 @@ public class ConfigString extends ConfigValue<String> {
     }
 
     @Override
+    public Property getProp() {
+        Property prop = super.getProp();
+
+        return prop;
+    }
+
+    @Override
     public void set(String value) {
         getProp().set(value);
     }
