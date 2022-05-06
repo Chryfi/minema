@@ -23,6 +23,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.config.IConfigElement;
 import org.apache.commons.lang3.text.WordUtils;
 import org.lwjgl.opengl.Display;
@@ -56,9 +57,9 @@ public class MinemaConfig {
 			"-f rawvideo -pix_fmt bgr24 -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -c:v libx264 -preset ultrafast -tune zerolatency -qp 18 -pix_fmt yuv420p %NAME%.mp4");
 	public final ConfigString videoEncoderParamsAlpha = new ConfigString(
 			"-f rawvideo -pix_fmt rgb32 -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -c:v libx264 -preset ultrafast -tune zerolatency -qp 18 -pix_fmt yuv420p %NAME%_rgb.mp4 -vf %DEFVF%,alphaextract,format=yuv420p %NAME%_alpha.mp4");
-	public final ConfigString videoEncoderParamsDepth = new ConfigString(
+	public static final ConfigString videoEncoderParamsDepth = new ConfigString(
 			"-f rawvideo -pix_fmt bgra64be -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -preset ultrafast -tune zerolatency -qp 6 -pix_fmt bgra64be %NAME%_depth_%d.png");
-	public final ConfigEnum<BitDepth> depthBufferBitDepth = new ConfigEnum<>(BitDepth.BIT16CHANNELS4);
+	public static final ConfigEnum<BitDepth> depthBufferBitDepth = new ConfigEnum<>(BitDepth.BIT16CHANNELS4);
 	public final ConfigEnum<SnapResolution> snapResolution = new ConfigEnum<>(SnapResolution.MOD2);
 	public final ConfigBoolean enableEncoderLogging = new ConfigBoolean(true);
 
@@ -217,4 +218,11 @@ public class MinemaConfig {
 		return frameLimit.get() * (useVideoEncoder.get() ? 1 << motionBlurLevel.get().getExp(frameRate.get()) : 1);
 	}
 
+	public static void ASMAfterCyclicEntryUpdateText(GuiConfigEntries.CycleValueEntry button)
+	{
+		if (button.getName().equals(depthBufferBitDepth.getProp().getName()))
+		{
+			videoEncoderParamsDepth.getProp().setDefaultValue(BitDepth.valueOf(button.getCurrentValue().toUpperCase()).getParams());
+		}
+	}
 }

@@ -29,6 +29,7 @@ import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -83,11 +84,11 @@ public class PipeFrameExporter extends FrameExporter {
 
 			if (cfg.depthBufferBitDepth.get() != BitDepth.BIT8)
 			{
-				String depthSequencePath = path.toUri().toString().replace("file:///", "") + movieName + "_depth/";
+				path = path.resolve(movieName + "_depth/");
 
-				if (new File(depthSequencePath).mkdirs())
+				if (!Files.exists(path))
 				{
-					path = Paths.get(depthSequencePath);
+					Files.createDirectory(path);
 				}
 			}
 		}

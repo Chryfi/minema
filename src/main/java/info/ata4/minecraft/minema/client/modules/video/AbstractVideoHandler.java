@@ -68,15 +68,10 @@ public abstract class AbstractVideoHandler extends CaptureModule {
 		if (!cfg.useVideoEncoder.get())
 		{
 			Path colorDir = CaptureSession.singleton.getCaptureDir().resolve(colorName);
-			Path depthDir = CaptureSession.singleton.getCaptureDir().resolve(colorName);
 
 			if (!Files.exists(colorDir))
 			{
 				Files.createDirectory(colorDir);
-			}
-			if (recordDepth && !Files.exists(depthDir))
-			{
-				Files.createDirectory(depthDir);
 			}
 		}
 
