@@ -104,20 +104,6 @@ public class DepthbufferReader extends CommonReader {
 
 			GL20.glUseProgram(program);
 
-			float far = MC.gameSettings.renderDistanceChunks * 16;
-			if (PrivateAccessor.isShaderPackSupported()) {
-				far *= 2;
-
-				if (PrivateAccessor.isFogFancy())
-					far *= 0.95F;
-
-				if (PrivateAccessor.isFogFast())
-					far *= 0.83F;
-
-				if (far < 173F)
-					far = 173F;
-			} else
-				far *= MathHelper.SQRT_2;
 			GL20.glUniform1f(GL20.glGetUniformLocation(program, "far"), this.calculateFar());
 
 			GlStateManager.disableAlpha();
@@ -262,6 +248,10 @@ public class DepthbufferReader extends CommonReader {
 	{
 		BitDepth bitDepth = Minema.instance.getConfig().depthBufferBitDepth.get();
 
+		ByteBuffer rChannel = null;
+		ByteBuffer gChannel = null;
+		ByteBuffer bChannel = null;
+
 		while (this.prebuffer.hasRemaining())
 		{
 			float depth = this.prebuffer.getFloat();
@@ -294,9 +284,29 @@ public class DepthbufferReader extends CommonReader {
 
 					break;
 				case BIT32F:
+					if (this.prebuffer.position() == 4)
+					{
+						rChannel = ByteBuffer.allocateDirect(this.buffer.capacity() / 3);
+						gChannel = ByteBuffer.allocateDirect(this.buffer.capacity() / 3);
+						bChannel = ByteBuffer.allocateDirect(this.buffer.capacity() / 3);
+					}
+
 					float f = this.linearizeDepth(depth);
 
-					this.buffer.putFloat(f * this.customFar);
+					rChannel.putFloat(f * this.customFar);
+					gChannel.putFloat(f * this.customFar);
+					bChannel.putFloat(f * this.customFar);
+
+					if (!this.prebuffer.hasRemaining())
+					{
+						rChannel.rewind();
+						gChannel.rewind();
+						bChannel.rewind();
+
+						this.buffer.put(rChannel);
+						this.buffer.put(gChannel);
+						this.buffer.put(bChannel);
+					}
 
 					break;
 			}
