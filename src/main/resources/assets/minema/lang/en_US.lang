@@ -81,8 +81,11 @@ minema.config.videoEncoderParamsAlpha.tooltip=Arguments for the video encoding p
 minema.config.videoEncoderParamsDepth=Encoder Arguments (depth buffer)
 minema.config.videoEncoderParamsDepth.tooltip=Arguments for exporting the depth buffer when 'Use depth' option is enabled. Placeholders are the same. Example arguments: 8 bits "-f rawvideo -pix_fmt bgr24 -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -c:v libx264 -preset ultrafast -tune zerolatency -qp 6 -pix_fmt yuv420p %NAME%_depth.mp4",\n16 bits 4 channels "-f rawvideo -pix_fmt bgra64be -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -preset ultrafast -tune zerolatency -qp 6 -pix_fmt bgra64be %NAME%_depth_%d.png",\n32 bits float "-f rawvideo -pix_fmt gbrpf32be -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -preset ultrafast -tune zerolatency -qp 6 -compression zip1 -pix_fmt gbrpf32le %NAME%_depth_%d.exr"
 
+minema.config.depthBufferMotionBlur=Depth buffer motion blur
+minema.config.depthBufferMotionBlur.tooltip=Use motion blur in the depth buffer when motion blur is activated in the capturing settings. Motion blur in the depth buffer is not very useful for masking, but useful for post process DOF.
+
 minema.config.depthBufferBitDepth=Bit depth for depth buffer
-minema.config.depthBufferBitDepth.tooltip=The bit depth that should be used internally for the depth buffer. 16 bits with 4 channels saves the render distance or the manually defined distance in the alpha channel. 32 bits saves the depth values multiplied with the render distance in the green channel.
+minema.config.depthBufferBitDepth.tooltip=The bit depth that should be used internally for the depth buffer. 16 bits with 4 channels saves the render distance or the manually defined distance in the alpha channel. 32 bits saves the depth values multiplied with the render distance.
 
 minema.config.snapResolution=Snap Resolution
 minema.config.snapResolution.tooltip=If necessary, snaps the recording resolution to the next lower resolution so that width and height is divisible by this modulus. FFMpeg only needs mod2, some other encoders might need more.

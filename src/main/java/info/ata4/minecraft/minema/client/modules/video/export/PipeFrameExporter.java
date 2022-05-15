@@ -112,14 +112,17 @@ public class PipeFrameExporter extends FrameExporter {
 			}
 			else
 			{
-				if (this.isColor)
+				/* dont do linear mixing for 32 bit depth buffer - I could not make it work */
+				boolean linearMixingCondition = (cfg.depthBufferMotionBlur.get() || this.isColor) && !(!this.isColor && MinemaConfig.depthBufferBitDepth.get().getBytesPerChannel() == 4);
+
+				if (linearMixingCondition)
 				{
 					defvf += cfg.motionBlurLinearMixing.get() ? ",format=pix_fmts=rgba64le,lutrgb=r=gammaval(2.2):g=gammaval(2.2):b=gammaval(2.2)" : "";
 				}
 
 				for (int i = 0; i < cfg.motionBlurLevel.get().getExp(cfg.frameRate.get()); i++)
 				{
-					if (this.isColor)
+					if (cfg.depthBufferMotionBlur.get() || this.isColor)
 					{
 						defvf += ",tblend=all_mode=average,framestep=2";
 					}
@@ -129,7 +132,7 @@ public class PipeFrameExporter extends FrameExporter {
 					}
 				}
 
-				if (this.isColor)
+				if (linearMixingCondition)
 				{
 					defvf += cfg.motionBlurLinearMixing.get() ? ",lutrgb=r=gammaval(1/2.2):g=gammaval(1/2.2):b=gammaval(1/2.2)" : "";
 				}
