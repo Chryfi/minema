@@ -16,7 +16,7 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
-version = "3.7"
+version = "3.7.1"
 
 if (project.hasProperty("dev")) {
     version += "-dev" + dev
@@ -70,9 +70,9 @@ dependencies {
     //deobfProvided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
 
     // For testing alpha and other stuff
-    deobfCompile "curse.maven:metamorph:2989420"
-    deobfCompile "curse.maven:blockbuster:2989424"
-    deobfCompile "curse.maven:mchorses-mclib:2989418"
+    //deobfCompile "curse.maven:metamorph:2989420"
+    //deobfCompile "curse.maven:blockbuster:2989424"
+    //deobfCompile "curse.maven:mchorses-mclib:2989418"
 
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
