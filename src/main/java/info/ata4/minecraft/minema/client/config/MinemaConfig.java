@@ -56,7 +56,7 @@ public class MinemaConfig {
 	public final ConfigString videoEncoderParams = new ConfigString(
 			"-f rawvideo -pix_fmt bgr24 -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -c:v libx264 -preset ultrafast -tune zerolatency -qp 18 -pix_fmt yuv420p %NAME%.mp4");
 	public final ConfigString videoEncoderParamsAlpha = new ConfigString(
-			"-f rawvideo -pix_fmt rgb32 -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -c:v libx264 -preset ultrafast -tune zerolatency -qp 18 -pix_fmt yuv420p %NAME%_rgb.mp4 -vf %DEFVF%,alphaextract,format=yuv420p %NAME%_alpha.mp4");
+			"-f rawvideo -pix_fmt rgb32 -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -c:v libx264 -preset ultrafast -tune zerolatency -qp 18 -pix_fmt yuv420p %NAME%_rgb.mp4 -vf %DEFVF%,format=rgb32,alphaextract,format=yuv420p %NAME%_alpha.mp4");
 	public static final ConfigString videoEncoderParamsDepth = new ConfigString(
 			"-f rawvideo -pix_fmt bgr48be -s %WIDTH%x%HEIGHT% -r %FPS% -i - -vf %DEFVF% -preset ultrafast -tune zerolatency -qp 6 -pix_fmt bgr48be %NAME%_depth_%d.png");
 	public static final ConfigEnum<BitDepth> depthBufferBitDepth = new ConfigEnum<>(BitDepth.BIT16CHANNELS3);
